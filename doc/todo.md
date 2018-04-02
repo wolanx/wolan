@@ -1,12 +1,12 @@
 
 
 wolan(pipeline)
-	get config
-	get code
-	build
-	push img
-	deploy
-	update ingress
+- [ ] get config
+- [x] get code
+- [ ] build
+- [ ] push img
+- [ ] deploy
+- [ ] update ingress
 
 
 - [ ] code(master)    -> webhook      -> wolan(pipeline)
@@ -22,5 +22,7 @@ wolan(pipeline)
     /git
         /demo-a
         /demo-b
+
+
 
 
