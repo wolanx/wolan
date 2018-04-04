@@ -1,1 +1,6 @@
-git_url: 'https://github.com/zx5435/cicdcm-demo.git'
+version: "1.0"
+name: "hehe"
+git:
+  url: 'https://github.com/zx5435/cicdcm-demo.git'
+  branch: 'master'
+docker-compose: "test.yml"
