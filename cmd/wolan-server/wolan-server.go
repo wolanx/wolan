@@ -11,6 +11,6 @@ func main() {
 
 	wDocker := docker.NewWDocker()
 	//wDocker.PullImg()
-	wDocker.Run()
+	wDocker.Deploy()
 
 }

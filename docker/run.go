@@ -2,7 +2,6 @@ package docker
 
 import (
 	"fmt"
-	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types"
 	"os"
 	"io/ioutil"
@@ -16,29 +15,26 @@ func FileGetConnents(path string) string {
 	return string(fileText)
 }
 
-func (this *WDocker) Run() {
-	fmt.Println("WDocker::Run")
-
+func (this *WDocker) Deploy() {
+	fmt.Println("WDocker::Deploy")
 	fmt.Println(wCenter.Config)
 
-	yml := compose.Parse(FileGetConnents(wCenter.WorkDir + "/" + wCenter.Config.DockerCompose))
-	fmt.Printf("%#v\n", yml)
-	fmt.Println(yml)
+	composeConfig := compose.Parse(FileGetConnents(wCenter.WorkDir + "/" + wCenter.Config.DockerCompose))
+	fmt.Println(composeConfig)
 
-	return
+	// 部署多个 container
+	for name, containerConfig := range composeConfig.Services {
+		fmt.Println(name, containerConfig)
 
-	imgName := "zx5435/cdemo-php:a"
+		resp, err := this.cli.ContainerCreate(this.ctx, containerConfig, nil, nil, "cdemo_"+name+"_1")
+		if err != nil {
+			panic(err)
+		}
 
-	resp, err := this.cli.ContainerCreate(this.ctx, &container.Config{
-		Image: imgName,
-	}, nil, nil, "")
-	if err != nil {
-		panic(err)
+		if err := this.cli.ContainerStart(this.ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+			panic(err)
+		}
+
+		fmt.Println(resp.ID)
 	}
-
-	if err := this.cli.ContainerStart(this.ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		panic(err)
-	}
-
-	fmt.Println(resp.ID)
 }
