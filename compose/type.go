@@ -2,11 +2,9 @@ package compose
 
 import (
 	"encoding/json"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
 )
 
-func (this *Configs) String() string {
+func (this *Service) String() string {
 	jsonStr, _ := json.MarshalIndent(this, "", "  ")
 	return string(jsonStr)
 }
@@ -17,9 +15,17 @@ type Configs struct {
 	Services map[string]*Service
 }
 
-// no use
 type Service struct {
-	Container *container.Config
-	Host      *container.HostConfig
-	Network   *network.NetworkingConfig
+	Image    string   `yaml:"image"`
+	Networks []string `yaml:"networks"`
+	Ports    []string `yaml:"ports"`
 }
+
+// no use
+//"github.com/docker/docker/api/types/container"
+//"github.com/docker/docker/api/types/network"
+//type Service struct {
+//	Container *container.Config
+//	Host      *container.HostConfig
+//	Network   *network.NetworkingConfig
+//}

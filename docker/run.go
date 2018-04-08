@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"github.com/zx5435/wolan/compose"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/go-connections/nat"
 )
 
 func FileGetConnents(path string) string {
@@ -24,28 +26,48 @@ func (this *WDocker) Deploy() {
 	//return
 
 	composeConfig := compose.Parse(FileGetConnents(wCenter.WorkDir + "/" + wCenter.Config.DockerCompose))
-	fmt.Println(composeConfig)
+	//fmt.Println(composeConfig)
 
 	//netStr := "cdemo_mynet"
 
 	// 部署多个 container
 	for name, service := range composeConfig.Services {
-		service.Host.NetworkMode = "cdemo_mynet"
-		fmt.Println(name)
-		//fmt.Printf("%#v\n", service.Container)
-		//fmt.Printf("%#v\n", service.Host)
+		serviceContainer := &container.Config{}
 
-		service.Network = &network.NetworkingConfig{
+		serviceHost := &container.HostConfig{}
+		for _, port := range service.Ports {
+			fmt.Println(port)
+
+			ports := []nat.PortBinding{
+				{
+					HostIP:   "qwe:123",
+					HostPort: "2323",
+				},
+			}
+			portMap := make(nat.PortMap)
+			portMap["80"] = ports
+
+			//serviceHost.PortBindings["80"] = []nat.PortBinding{
+			//	{
+			//		HostIP:   "qwe:123",
+			//		HostPort: "2323",
+			//	},
+			//}
+			serviceHost.PortBindings = portMap
+		}
+
+		serviceNetwork := &network.NetworkingConfig{
 			EndpointsConfig: map[string]*network.EndpointSettings{"cdemo_mynet": &network.EndpointSettings{
 				Aliases: []string{name},
 			}},
 		}
 
-		fmt.Printf("%#v\n", service.Network)
-		fmt.Println(composeConfig)
-		//break
+		fmt.Println(name)
+		fmt.Println(service)
+		fmt.Printf("%+v\n\n", serviceHost.PortBindings)
+		continue
 
-		resp, err := this.cli.ContainerCreate(this.ctx, service.Container, service.Host, service.Network, "cdemo_"+name+"_1")
+		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, "cdemo_"+name+"_1")
 		if err != nil {
 			panic(err)
 		}
