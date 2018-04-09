@@ -1,35 +1,48 @@
 package docker
 
 import (
+	"errors"
 	"fmt"
-	"github.com/docker/docker/api/types"
-	"os"
 	"io/ioutil"
-	"github.com/zx5435/wolan/compose"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/go-connections/nat"
+	"os"
 	"strings"
-	"github.com/pkg/errors"
+
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
+	"github.com/docker/go-connections/nat"
+	"github.com/zx5435/wolan/compose"
 )
 
-func FileGetConnents(path string) string {
+var (
+	stackName     string
+	composeConfig *compose.Configs
+)
+
+func FileGetContents(path string) string {
 	file, _ := os.Open(path)
 	fileText, _ := ioutil.ReadAll(file)
 
 	return string(fileText)
 }
 
+func doLoad() {
+	composeConfig = compose.Parse(FileGetContents(wCenter.WorkDir + "/" + wCenter.Config.DockerCompose))
+}
+
 func (this *WDocker) Deploy() {
-	//this.CreateNet()
-	//return
+	fmt.Println("WDocker::Deploy")
+	doLoad()
 
-	composeConfig := compose.Parse(FileGetConnents(wCenter.WorkDir + "/" + wCenter.Config.DockerCompose))
-	//fmt.Println(composeConfig)
+	stackName = "cdemo"
 
-	//netStr := "cdemo_mynet"
+	// step.1 networks 网格
+	this.CreateNet()
+	return
 
-	// 部署多个 container
+	// step.2 volumes
+
+	// step.3 services 部署多个 container
 	for name, service := range composeConfig.Services {
 		fmt.Println(name)
 
@@ -80,16 +93,16 @@ func (this *WDocker) Deploy() {
 		serviceHost.PortBindings = portMap
 
 		serviceNetwork := &network.NetworkingConfig{
-			EndpointsConfig: map[string]*network.EndpointSettings{"cdemo_mynet": {
+			EndpointsConfig: map[string]*network.EndpointSettings{stackName + "_mynet": {
 				Aliases: []string{name},
 			}},
 		}
 
-		fmt.Printf("%+v\n\n", serviceContainer.ExposedPorts)
-		fmt.Printf("%+v\n\n", serviceHost.PortBindings)
+		fmt.Printf("ExposedPorts: %+v\n", serviceContainer.ExposedPorts)
+		fmt.Printf("PortBindings: %+v\n", serviceHost.PortBindings)
 		//continue
 
-		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, "cdemo_"+name+"_1")
+		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, stackName+"_"+name+".1.xxxxx")
 		if err != nil {
 			panic(err)
 		}
@@ -103,5 +116,11 @@ func (this *WDocker) Deploy() {
 }
 
 func (this *WDocker) CreateNet() {
-	this.cli.NetworkCreate(this.ctx, "cdemo_mynet", types.NetworkCreate{})
+	fmt.Println(stackName)
+	fmt.Println(composeConfig.Networks)
+
+	_, err := this.cli.NetworkCreate(this.ctx, stackName+"_mynet", types.NetworkCreate{})
+	if err != nil {
+		panic(err)
+	}
 }

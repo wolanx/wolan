@@ -1,14 +1,14 @@
 package docker
 
 import (
+	"fmt"
 	"io"
 	"os"
 
-	"github.com/docker/docker/client"
 	"github.com/docker/docker/api/types"
-	"golang.org/x/net/context"
-	"fmt"
+	"github.com/docker/docker/client"
 	"github.com/zx5435/wolan/wolan"
+	"golang.org/x/net/context"
 )
 
 var wCenter *wolan.WCenter

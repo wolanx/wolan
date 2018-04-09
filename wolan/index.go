@@ -1,14 +1,15 @@
 package wolan
 
-import "fmt"
-import "os/exec"
 import (
-	"github.com/zx5435/wolan/util"
-	"os"
-	"io/ioutil"
-	"gopkg.in/yaml.v2"
-	"strings"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"strings"
+
+	"github.com/zx5435/wolan/util"
+	"gopkg.in/yaml.v2"
 )
 
 type WolanConfig struct {

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/zx5435/wolan/wolan"
 	"github.com/zx5435/wolan/docker"
+	"github.com/zx5435/wolan/wolan"
 )
 
 func main() {
