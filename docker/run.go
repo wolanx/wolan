@@ -9,6 +9,8 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
+	"strings"
+	"github.com/pkg/errors"
 )
 
 func FileGetConnents(path string) string {
@@ -19,9 +21,6 @@ func FileGetConnents(path string) string {
 }
 
 func (this *WDocker) Deploy() {
-	//fmt.Println("WDocker::Deploy")
-	//fmt.Println(wCenter.Config)
-
 	//this.CreateNet()
 	//return
 
@@ -32,40 +31,63 @@ func (this *WDocker) Deploy() {
 
 	// 部署多个 container
 	for name, service := range composeConfig.Services {
+		fmt.Println(name)
+
 		serviceContainer := &container.Config{}
+		serviceContainer.Image = service.Image
+
+		exPortMap := make(nat.PortSet)
+		portMap := make(nat.PortMap)
 
 		serviceHost := &container.HostConfig{}
-		for _, port := range service.Ports {
-			fmt.Println(port)
+		for _, portStr := range service.Ports {
+			portArr := strings.Split(portStr, ":")
+
+			var (
+				hostIP     string
+				hostPort   string
+				targetPort nat.Port
+			)
+			switch len(portArr) {
+			case 3:
+				hostIP = portArr[0]
+				hostPort = portArr[1]
+				targetPort = nat.Port(portArr[2])
+			case 2:
+				hostIP = ""
+				hostPort = portArr[0]
+				targetPort = nat.Port(portArr[1])
+			case 1:
+				hostIP = ""
+				hostPort = ""
+				targetPort = nat.Port(portArr[0])
+			default:
+				panic(errors.New("port arr : !<=3"))
+			}
+
+			fmt.Printf("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
 
 			ports := []nat.PortBinding{
 				{
-					HostIP:   "qwe:123",
-					HostPort: "2323",
+					HostIP:   hostIP,
+					HostPort: hostPort,
 				},
 			}
-			portMap := make(nat.PortMap)
-			portMap["80"] = ports
-
-			//serviceHost.PortBindings["80"] = []nat.PortBinding{
-			//	{
-			//		HostIP:   "qwe:123",
-			//		HostPort: "2323",
-			//	},
-			//}
-			serviceHost.PortBindings = portMap
+			exPortMap[targetPort] = struct{}{}
+			portMap[targetPort] = ports
 		}
+		serviceContainer.ExposedPorts = exPortMap
+		serviceHost.PortBindings = portMap
 
 		serviceNetwork := &network.NetworkingConfig{
-			EndpointsConfig: map[string]*network.EndpointSettings{"cdemo_mynet": &network.EndpointSettings{
+			EndpointsConfig: map[string]*network.EndpointSettings{"cdemo_mynet": {
 				Aliases: []string{name},
 			}},
 		}
 
-		fmt.Println(name)
-		fmt.Println(service)
+		fmt.Printf("%+v\n\n", serviceContainer.ExposedPorts)
 		fmt.Printf("%+v\n\n", serviceHost.PortBindings)
-		continue
+		//continue
 
 		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, "cdemo_"+name+"_1")
 		if err != nil {
