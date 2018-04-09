@@ -119,7 +119,11 @@ func (this *WDocker) CreateNet() {
 	fmt.Println(stackName)
 	fmt.Println(composeConfig.Networks)
 
-	_, err := this.cli.NetworkCreate(this.ctx, stackName+"_mynet", types.NetworkCreate{})
+	_, err := this.cli.NetworkCreate(this.ctx, stackName+"_mynet", types.NetworkCreate{
+		//CheckDuplicate: true,
+		Driver: "overlay",
+		Scope:  "swarm",
+	})
 	if err != nil {
 		panic(err)
 	}
