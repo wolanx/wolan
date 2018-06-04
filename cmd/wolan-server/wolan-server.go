@@ -12,4 +12,5 @@ func main() {
 	wDocker := docker.NewWDocker()
 	//wDocker.PullImg()
 	wDocker.Deploy()
+	wDocker.Down()
 }

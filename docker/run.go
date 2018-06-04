@@ -108,7 +108,7 @@ func (this *WDocker) CreateContainer() {
 				panic(errors.New("port arr : !<=3"))
 			}
 
-			log.Printf("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
+			//log.Printf("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
 
 			ports := []nat.PortBinding{
 				{
@@ -133,8 +133,7 @@ func (this *WDocker) CreateContainer() {
 			EndpointsConfig: endpointsConfig,
 		}
 
-		log.Printf("ExposedPorts: %+v\n", serviceContainer.ExposedPorts)
-		log.Printf("PortBindings: %+v\n", serviceHost.PortBindings)
+		log.Printf("ExposedPorts: %+v\nPortBindings: %+v\n", serviceContainer.ExposedPorts, serviceHost.PortBindings)
 		//continue
 
 		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, stackName+"_"+serviceName+".1.xxxxx")
