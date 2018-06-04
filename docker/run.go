@@ -2,7 +2,6 @@ package docker
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -12,6 +11,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	"github.com/zx5435/wolan/compose"
+	"log"
 )
 
 var (
@@ -31,22 +31,52 @@ func doLoad() {
 }
 
 func (this *WDocker) Deploy() {
-	fmt.Println("WDocker::Deploy")
-	doLoad()
-
 	stackName = "cdemo"
+	log.Println("WDocker::Deploy", stackName)
+
+	doLoad()
 
 	// step.1 networks 网格
 	this.CreateNet()
-	return
 
 	// step.2 volumes
 
 	// step.3 services 部署多个 container
-	for name, service := range composeConfig.Services {
-		fmt.Println(name)
+	this.CreateContainer()
+}
+
+// 创建网络
+func (this *WDocker) CreateNet() {
+	log.Println(composeConfig.Networks)
+
+	for networkName := range composeConfig.Networks {
+		labels := make(map[string]string)
+		labels["com.docker.compose.project"] = stackName
+
+		res, err := this.cli.NetworkCreate(this.ctx, stackName+"_"+networkName, types.NetworkCreate{
+			CheckDuplicate: true,
+			//Driver: "overlay",
+			//Scope:  "swarm",
+			Labels: labels,
+		})
+		if err != nil {
+			log.Printf(err.Error())
+		} else {
+			log.Printf("%#v\n", res)
+		}
+	}
+}
+
+// 创建容器
+func (this *WDocker) CreateContainer() {
+	for serviceName, service := range composeConfig.Services {
+		log.Println(serviceName, service)
+
+		labels := make(map[string]string)
+		labels["com.docker.compose.project"] = stackName
 
 		serviceContainer := &container.Config{}
+		serviceContainer.Labels = labels
 		serviceContainer.Image = service.Image
 
 		exPortMap := make(nat.PortSet)
@@ -78,7 +108,7 @@ func (this *WDocker) Deploy() {
 				panic(errors.New("port arr : !<=3"))
 			}
 
-			fmt.Printf("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
+			log.Printf("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
 
 			ports := []nat.PortBinding{
 				{
@@ -92,17 +122,22 @@ func (this *WDocker) Deploy() {
 		serviceContainer.ExposedPorts = exPortMap
 		serviceHost.PortBindings = portMap
 
-		serviceNetwork := &network.NetworkingConfig{
-			EndpointsConfig: map[string]*network.EndpointSettings{stackName + "_mynet": {
-				Aliases: []string{name},
-			}},
+		endpointsConfig := make(map[string]*network.EndpointSettings)
+		for _, networkName := range service.Networks {
+			endpointsConfig[stackName+"_"+networkName] = &network.EndpointSettings{
+				Aliases: []string{serviceName},
+			}
 		}
 
-		fmt.Printf("ExposedPorts: %+v\n", serviceContainer.ExposedPorts)
-		fmt.Printf("PortBindings: %+v\n", serviceHost.PortBindings)
+		serviceNetwork := &network.NetworkingConfig{
+			EndpointsConfig: endpointsConfig,
+		}
+
+		log.Printf("ExposedPorts: %+v\n", serviceContainer.ExposedPorts)
+		log.Printf("PortBindings: %+v\n", serviceHost.PortBindings)
 		//continue
 
-		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, stackName+"_"+name+".1.xxxxx")
+		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, stackName+"_"+serviceName+".1.xxxxx")
 		if err != nil {
 			panic(err)
 		}
@@ -111,20 +146,6 @@ func (this *WDocker) Deploy() {
 			panic(err)
 		}
 
-		fmt.Println(resp.ID)
-	}
-}
-
-func (this *WDocker) CreateNet() {
-	fmt.Println(stackName)
-	fmt.Println(composeConfig.Networks)
-
-	_, err := this.cli.NetworkCreate(this.ctx, stackName+"_mynet", types.NetworkCreate{
-		//CheckDuplicate: true,
-		Driver: "overlay",
-		Scope:  "swarm",
-	})
-	if err != nil {
-		panic(err)
+		log.Println(resp.ID)
 	}
 }

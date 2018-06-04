@@ -1,7 +1,6 @@
 package docker
 
 import (
-	"fmt"
 	"io"
 	"os"
 
@@ -9,12 +8,12 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/zx5435/wolan/wolan"
 	"golang.org/x/net/context"
+	"log"
 )
 
 var wCenter *wolan.WCenter
 
 func init() {
-	fmt.Println("init")
 	wCenter = wolan.NewWCenter()
 }
 
@@ -38,7 +37,7 @@ func NewWDocker() *WDocker {
 }
 
 func (wDocker *WDocker) PullImg() {
-	fmt.Println("WDocker::pullImg")
+	log.Println("WDocker::pullImg")
 
 	imgName := "192.168.199.115:5000/cdemo-php:a"
 

@@ -10,6 +10,7 @@ import (
 
 	"github.com/zx5435/wolan/util"
 	"gopkg.in/yaml.v2"
+	"log"
 )
 
 type WolanConfig struct {
@@ -62,8 +63,9 @@ func NewWCenter() *WCenter {
 	return wCenter
 }
 
-func (this *WCenter) Run() {
-	basePath := "/Users/kayl.zhao/go/src/github.com/zx5435/wolan/__test__"
+func (this *WCenter) Run(do bool) {
+	//basePath := "/Users/zhaoyujie/go/src/github.com/zx5435/wolan/__test__"
+	basePath := "/Users/zhaoyujie/go/src/github.com/zx5435/wolan/__test__"
 	gitPath := basePath + "/git"
 
 	yamlFilename := basePath + "/Config/app-1/wolan.yaml"
@@ -77,9 +79,14 @@ func (this *WCenter) Run() {
 	hashName := "qwe" // TODO
 	this.WorkDir = gitPath + "/" + hashName
 
+	//fmt.Println(this.Config)
+	if !do {
+		return
+	}
+
 	// step.1 预准备
-	//this.GetCode()
-	//this.DoBuild()
+	this.GetCode()
+	this.DoBuild()
 	this.PushImage()
 
 	// step.2 调度
@@ -115,7 +122,7 @@ func (this *WCenter) DoBuild() {
 
 // 推送image
 func (this *WCenter) PushImage() {
-	fmt.Println("step::PushImage")
+	log.Println("step::PushImage")
 
 	// TODO
 }

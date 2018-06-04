@@ -7,10 +7,9 @@ import (
 
 func main() {
 	wCenter := wolan.NewWCenter()
-	wCenter.Run()
+	wCenter.Run(false)
 
 	wDocker := docker.NewWDocker()
 	//wDocker.PullImg()
 	wDocker.Deploy()
-
 }
