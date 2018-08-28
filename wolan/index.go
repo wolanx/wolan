@@ -11,7 +11,6 @@ import (
 
 	"github.com/zx5435/wolan/util"
 	"gopkg.in/yaml.v2"
-	"log"
 )
 
 type WolanConfig struct {

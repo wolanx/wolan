@@ -13,7 +13,9 @@ func init() {
 
 func main() {
 	wCenter := wolan.NewWCenter()
-	wCenter.Run(false)
+	wCenter.Run(true)
+
+	return
 
 	wDocker := docker.NewWDocker()
 	//wDocker.PullImg()
