@@ -14,7 +14,6 @@ import (
 var wCenter *wolan.WCenter
 
 func init() {
-	log.Println("init")
 	wCenter = wolan.NewWCenter()
 }
 

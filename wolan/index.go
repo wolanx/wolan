@@ -63,13 +63,11 @@ func NewWCenter() *WCenter {
 	return wCenter
 }
 
-func (this *WCenter) Run(do bool) {
+func (this *WCenter) Run() {
 	pwd, _ := os.Getwd()
 
 	basePath, _ := filepath.Abs(pwd + "/../../__test__")
 	log.Println(basePath)
-
-	//os.Exit(0)
 
 	gitPath := basePath + "/git"
 
@@ -83,18 +81,6 @@ func (this *WCenter) Run(do bool) {
 
 	hashName := "qwe" // TODO
 	this.WorkDir = gitPath + "/" + hashName
-
-	//fmt.Println(this.Config)
-	if !do {
-		return
-	}
-
-	// step.1 预准备
-	this.GetCode()
-	//this.DoBuild()
-	//this.PushImage()
-
-	// step.2 调度
 }
 
 // clone code
