@@ -3,6 +3,7 @@ package docker
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/docker/docker/api/types"
@@ -14,7 +15,7 @@ import (
 var wCenter *wolan.WCenter
 
 func init() {
-	fmt.Println("init")
+	log.Println("init")
 	wCenter = wolan.NewWCenter()
 }
 

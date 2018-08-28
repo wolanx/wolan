@@ -2,10 +2,11 @@ package wolan
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/zx5435/wolan/util"
@@ -36,7 +37,7 @@ type WCenter struct {
 
 func quickRun(command string, workDir string) {
 	args := strings.Split(command, " ")
-	fmt.Println(args)
+	log.Println(args)
 
 	cmd := exec.Command(args[0], args[1:]...)
 	if workDir != "" {
@@ -44,7 +45,7 @@ func quickRun(command string, workDir string) {
 	}
 
 	out, err := cmd.CombinedOutput()
-	fmt.Println("cmd out:", string(out))
+	log.Println("cmd out:", string(out))
 
 	if err != nil {
 		panic(err)
@@ -63,7 +64,13 @@ func NewWCenter() *WCenter {
 }
 
 func (this *WCenter) Run() {
-	basePath := "/Users/kayl.zhao/go/src/github.com/zx5435/wolan/__test__"
+	pwd, _ := os.Getwd()
+
+	basePath, _ := filepath.Abs(pwd + "/../../__test__")
+	log.Println(basePath)
+
+	//os.Exit(0)
+
 	gitPath := basePath + "/git"
 
 	yamlFilename := basePath + "/Config/app-1/wolan.yaml"
@@ -78,16 +85,16 @@ func (this *WCenter) Run() {
 	this.WorkDir = gitPath + "/" + hashName
 
 	// step.1 预准备
-	//this.GetCode()
+	this.GetCode()
 	//this.DoBuild()
-	this.PushImage()
+	//this.PushImage()
 
 	// step.2 调度
 }
 
 // clone code
 func (this *WCenter) GetCode() {
-	fmt.Println("step::GetCode")
+	log.Println("step::GetCode")
 
 	var cmd *exec.Cmd
 
@@ -99,7 +106,7 @@ func (this *WCenter) GetCode() {
 	}
 
 	out, err := cmd.CombinedOutput()
-	fmt.Println("cmd out:", string(out))
+	log.Println("cmd out:", string(out))
 
 	if err != nil {
 		panic(err)
@@ -108,14 +115,14 @@ func (this *WCenter) GetCode() {
 
 // 构建
 func (this *WCenter) DoBuild() {
-	fmt.Println("step::DoBuild")
+	log.Println("step::DoBuild")
 
 	quickRun("make build-a", this.WorkDir)
 }
 
 // 推送image
 func (this *WCenter) PushImage() {
-	fmt.Println("step::PushImage")
+	log.Println("step::PushImage")
 
 	// TODO
 }
