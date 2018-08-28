@@ -11,6 +11,7 @@ import (
 
 	"github.com/zx5435/wolan/util"
 	"gopkg.in/yaml.v2"
+	"log"
 )
 
 type WolanConfig struct {
@@ -63,7 +64,7 @@ func NewWCenter() *WCenter {
 	return wCenter
 }
 
-func (this *WCenter) Run() {
+func (this *WCenter) Run(do bool) {
 	pwd, _ := os.Getwd()
 
 	basePath, _ := filepath.Abs(pwd + "/../../__test__")
@@ -83,6 +84,11 @@ func (this *WCenter) Run() {
 
 	hashName := "qwe" // TODO
 	this.WorkDir = gitPath + "/" + hashName
+
+	//fmt.Println(this.Config)
+	if !do {
+		return
+	}
 
 	// step.1 预准备
 	this.GetCode()

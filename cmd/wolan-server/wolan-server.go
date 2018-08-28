@@ -13,11 +13,10 @@ func init() {
 
 func main() {
 	wCenter := wolan.NewWCenter()
-	wCenter.Run()
-	//return
+	wCenter.Run(false)
 
 	wDocker := docker.NewWDocker()
 	//wDocker.PullImg()
 	wDocker.Deploy()
-
+	wDocker.Down()
 }

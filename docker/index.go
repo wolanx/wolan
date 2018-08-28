@@ -1,7 +1,6 @@
 package docker
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -39,7 +38,7 @@ func NewWDocker() *WDocker {
 }
 
 func (wDocker *WDocker) PullImg() {
-	fmt.Println("WDocker::pullImg")
+	log.Println("WDocker::pullImg")
 
 	imgName := "192.168.199.115:5000/cdemo-php:a"
 
