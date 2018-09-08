@@ -36,10 +36,10 @@ func NewWDocker() *WDocker {
 	return wDocker
 }
 
-func (wDocker *WDocker) PullImg() {
+func (wDocker *WDocker) Pull() {
 	log.Println("WDocker::pullImg")
 
-	imgName := "192.168.199.115:5000/cdemo-php:a"
+	imgName := "zx5435/cdemo-nginx:a"
 
 	out, err := wDocker.cli.ImagePull(wDocker.ctx, imgName, types.ImagePullOptions{})
 	if err != nil {
@@ -47,4 +47,5 @@ func (wDocker *WDocker) PullImg() {
 	}
 
 	io.Copy(os.Stdout, out)
+	//log.Println(out)
 }

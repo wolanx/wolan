@@ -3,6 +3,7 @@ package docker
 import (
 	"errors"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	"github.com/zx5435/wolan/compose"
-	"log"
 )
 
 var (
@@ -42,7 +42,7 @@ func (this *WDocker) Deploy() {
 	// step.2 volumes
 
 	// step.3 services 部署多个 container
-	this.CreateContainer()
+	this.Run()
 }
 
 // 创建网络
@@ -68,7 +68,7 @@ func (this *WDocker) CreateNet() {
 }
 
 // 创建容器
-func (this *WDocker) CreateContainer() {
+func (this *WDocker) Run() {
 	for serviceName, service := range composeConfig.Services {
 		log.Println(serviceName, service)
 
@@ -133,7 +133,8 @@ func (this *WDocker) CreateContainer() {
 			EndpointsConfig: endpointsConfig,
 		}
 
-		log.Printf("ExposedPorts: %+v\nPortBindings: %+v\n", serviceContainer.ExposedPorts, serviceHost.PortBindings)
+		log.Printf("ExposedPorts: %+v", serviceContainer.ExposedPorts)
+		log.Printf("PortBindings: %+v", serviceHost.PortBindings)
 		//continue
 
 		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, stackName+"_"+serviceName+".1.xxxxx")

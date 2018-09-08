@@ -20,10 +20,10 @@ func main() {
 	//wCenter.PushImage()
 	// step.2 调度
 
-	return
+	//return
 
 	wDocker := docker.NewWDocker()
-	wDocker.PullImg()
-	wDocker.Deploy()
-	wDocker.Down()
+	//wDocker.Pull()
+	//wDocker.Deploy()
+	wDocker.Stop()
 }
