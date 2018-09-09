@@ -31,8 +31,9 @@ type git struct {
 }
 
 type WCenter struct {
-	Config  *WolanConfig
-	WorkDir string
+	Config    *WolanConfig
+	StackName string
+	WorkDir   string
 }
 
 func quickRun(command string, workDir string) {
@@ -66,12 +67,12 @@ func NewWCenter() *WCenter {
 func (this *WCenter) Run() {
 	pwd, _ := os.Getwd()
 
-	basePath, _ := filepath.Abs(pwd + "/../../__test__")
+	basePath, _ := filepath.Abs(pwd + "/__test__")
 	log.Println(basePath)
 
 	gitPath := basePath + "/git"
 
-	yamlFilename := basePath + "/Config/app-1/wolan.yaml"
+	yamlFilename := basePath + "/config/app-1/wolan.yaml"
 	file, _ := os.Open(yamlFilename)
 	fileText, _ := ioutil.ReadAll(file)
 
@@ -81,6 +82,7 @@ func (this *WCenter) Run() {
 
 	hashName := "qwe" // TODO
 	this.WorkDir = gitPath + "/" + hashName
+	this.StackName = wolanConfig.Name
 }
 
 // clone code

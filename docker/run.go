@@ -15,7 +15,6 @@ import (
 )
 
 var (
-	stackName     string
 	composeConfig *compose.Configs
 )
 
@@ -31,8 +30,7 @@ func doLoad() {
 }
 
 func (this *WDocker) Deploy() {
-	stackName = "cdemo"
-	log.Println("WDocker::Deploy", stackName)
+	log.Println("WDocker::Deploy", wCenter.StackName)
 
 	doLoad()
 
@@ -51,9 +49,9 @@ func (this *WDocker) CreateNet() {
 
 	for networkName := range composeConfig.Networks {
 		labels := make(map[string]string)
-		labels["com.docker.compose.project"] = stackName
+		labels["com.docker.compose.project"] = wCenter.StackName
 
-		res, err := this.cli.NetworkCreate(this.ctx, stackName+"_"+networkName, types.NetworkCreate{
+		res, err := this.cli.NetworkCreate(this.ctx, wCenter.StackName+"_"+networkName, types.NetworkCreate{
 			CheckDuplicate: true,
 			//Driver: "overlay",
 			//Scope:  "swarm",
@@ -73,7 +71,7 @@ func (this *WDocker) Run() {
 		log.Println(serviceName, service)
 
 		labels := make(map[string]string)
-		labels["com.docker.compose.project"] = stackName
+		labels["com.docker.compose.project"] = wCenter.StackName
 
 		serviceContainer := &container.Config{}
 		serviceContainer.Labels = labels
@@ -124,7 +122,7 @@ func (this *WDocker) Run() {
 
 		endpointsConfig := make(map[string]*network.EndpointSettings)
 		for _, networkName := range service.Networks {
-			endpointsConfig[stackName+"_"+networkName] = &network.EndpointSettings{
+			endpointsConfig[wCenter.StackName+"_"+networkName] = &network.EndpointSettings{
 				Aliases: []string{serviceName},
 			}
 		}
@@ -137,7 +135,7 @@ func (this *WDocker) Run() {
 		log.Printf("PortBindings: %+v", serviceHost.PortBindings)
 		//continue
 
-		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, stackName+"_"+serviceName+".1.xxxxx")
+		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, wCenter.StackName+"_"+serviceName+".1.xxxxx")
 		if err != nil {
 			panic(err)
 		}

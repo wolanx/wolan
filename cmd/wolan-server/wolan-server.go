@@ -24,6 +24,6 @@ func main() {
 
 	wDocker := docker.NewWDocker()
 	//wDocker.Pull()
-	//wDocker.Deploy()
 	wDocker.Stop()
+	//wDocker.Deploy()
 }
