@@ -1,0 +1,6 @@
+version: "1.0"
+name: "go-fs"
+git:
+  url: 'https://github.com/zx5435/go-fs.git'
+  branch: 'master'
+docker-compose: "docker-composer.yml"

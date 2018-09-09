@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 
+	"github.com/zx5435/wolan/config"
 	"github.com/zx5435/wolan/util"
 	"gopkg.in/yaml.v2"
 )
@@ -65,14 +65,7 @@ func NewWCenter() *WCenter {
 }
 
 func (this *WCenter) Run() {
-	pwd, _ := os.Getwd()
-
-	basePath, _ := filepath.Abs(pwd + "/__test__")
-	log.Println(basePath)
-
-	gitPath := basePath + "/git"
-
-	yamlFilename := basePath + "/config/app-1/wolan.yaml"
+	yamlFilename := config.TaskRootPath + "/app-2/wolan.yaml"
 	file, _ := os.Open(yamlFilename)
 	fileText, _ := ioutil.ReadAll(file)
 
@@ -80,8 +73,8 @@ func (this *WCenter) Run() {
 	yaml.Unmarshal([]byte(fileText), wolanConfig)
 	this.Config = wolanConfig
 
-	hashName := "qwe" // TODO
-	this.WorkDir = gitPath + "/" + hashName
+	hashName := wolanConfig.Name // TODO
+	this.WorkDir = config.GitRootPath + "/" + hashName
 	this.StackName = wolanConfig.Name
 }
 
