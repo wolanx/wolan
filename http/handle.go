@@ -19,5 +19,6 @@ func Index(c echo.Context) error {
 	data := make(map[string]interface{})
 	data["arr"] = tasks
 
+	c.Redirect(302, "//localhost:2345/")
 	return c.Render(200, "index.html", data)
 }
