@@ -1,13 +1,10 @@
 package main
 
 import (
-	"html/template"
-	"io"
 	"log"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/zx5435/wolan/config"
 	_ "github.com/zx5435/wolan/config"
 	"github.com/zx5435/wolan/http"
 )
@@ -18,27 +15,13 @@ func init() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
 }
 
-type Template struct {
-	templates *template.Template
-}
-
-func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
-}
-
 func main() {
 	// Echo instance
 	e := echo.New()
 
-	t := &Template{
-		templates: template.Must(template.ParseGlob(config.ViewPath + "/*.html")),
-	}
-
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-
-	e.Renderer = t
 
 	// Routes
 	e.GET("/", http.Index)
