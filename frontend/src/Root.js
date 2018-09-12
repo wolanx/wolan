@@ -1,11 +1,12 @@
 import React from "react";
 import {BrowserRouter as Router, Link, Route} from "react-router-dom";
+import Index from "./views/index"
 import About from "./views/1"
 
 
 // https://reacttraining.com/react-router/web/example/basic
 
-const BasicExample = () => (
+const Root = () => (
     <Router>
         <div>
             <ul>
@@ -22,17 +23,11 @@ const BasicExample = () => (
 
             <hr/>
 
-            <Route exact path="/" component={Home}/>
+            <Route exact path="/" component={Index}/>
             <Route path="/about" component={About}/>
             <Route path="/topics" component={Topics}/>
         </div>
     </Router>
-);
-
-const Home = () => (
-    <div>
-        <h2>Home</h2>
-    </div>
 );
 
 const Topics = ({match}) => (
@@ -65,4 +60,4 @@ const Topic = ({match}) => (
     </div>
 );
 
-export default BasicExample;
+export default Root;
