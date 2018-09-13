@@ -22,12 +22,13 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.CORS())
 
 	// Routes
 	e.GET("/", http.Index)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":2346"))
+	e.Logger.Fatal(e.Start(":23456"))
 
 	//wCenter := wolan.NewWCenter()
 	//wCenter.Run()
