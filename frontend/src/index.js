@@ -3,12 +3,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './assets/reset.css'
 import registerServiceWorker from './registerServiceWorker'
-import Index from './views/root'
+import Root from './views/router'
 
-/*global log*/
+window.title_prefix = ' - 链上智能金融'
 window.log = function (...b) {
     console.log('%c %s', 'color:#f0f;background:#eee;', ...b)
 }
+document.setTitle = function (name) {
+    document.title = name + window.title_prefix
+}
 
-ReactDOM.render(<Index/>, document.getElementById('root'))
+ReactDOM.render(<Root/>, document.getElementById('root'))
 registerServiceWorker()

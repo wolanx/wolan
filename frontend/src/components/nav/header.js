@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Button, Menu } from 'element-react'
+import { Menu } from 'element-react'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -11,15 +11,18 @@ class App extends Component {
         return (
             <div className="bit-header">
                 <Menu className="el-menu-demo" mode="horizontal">
-                    <Menu.Item index={'a1'}><Link to="/">首页</Link></Menu.Item>
-                    <Menu.Item index={'b2'}><Link to="/market/coin">单币</Link></Menu.Item>
+                    <Menu.Item index={'index'}><Link to="/">首页</Link></Menu.Item>
+                    <Menu.Item index={'danbi'}><Link to="/market/coin">单币</Link></Menu.Item>
+                    <Menu.Item index={'exchange'}><Link to="/market/exchange">交易所</Link></Menu.Item>
+                    <Menu.Item index={'news'}><Link to="/news">资讯</Link></Menu.Item>
+                    <Menu.Item index={'zixuan'}><Link to="/user/optional/coinpair">自选</Link></Menu.Item>
                     {
                         user.id ? (
-                            <Menu.Item index={'zhuxiao'}><a onClick={this.logout.bind(this)}>注销{user.phone}</a></Menu.Item>
+                            <Menu.Item index={'logout'}><a onClick={this.logout.bind(this)}>{user.phone}注销</a></Menu.Item>
                         ) : (
                             <div>
-                                <Menu.Item index={'c3'}><Link to="/user/login">登录</Link></Menu.Item>
-                                <Menu.Item index={'d4'}><Link to="/user/reg">注册</Link></Menu.Item>
+                                <Menu.Item index={'login'}><Link to="/user/login">登录</Link></Menu.Item>
+                                <Menu.Item index={'reg'}><Link to="/user/reg">注册</Link></Menu.Item>
                             </div>
                         )
                     }

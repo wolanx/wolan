@@ -11,11 +11,10 @@ const LayoutBase = ({component: Component, ...rest, needLogin}) => {
     return (
         <div>
             {toLogin ? (
-                <Redirect
-                    to={{
-                        pathname: '/user/login',
-                        search: `?from=${rest.path}`,
-                    }}
+                <Redirect to={{
+                    pathname: '/user/login',
+                    search: `from=${rest.path}`,
+                }}
                 />
             ) : (
                 <Route {...rest} render={props => (
