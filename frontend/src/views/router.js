@@ -6,26 +6,19 @@ import { createStore } from 'redux'
 
 import '../assets/less/main.less'
 import LayoutBase from '../components/layout/layout'
-import WS from '../components/ws/WS'
 import reducers from '../reducers'
-import CoinInfo from './coin/CoinInfo'
-import RatingAgency from './coin/RatingAgency'
 import ExchangeInfo from './exchange/ExchangeInfo'
-import MarketCoin from './market/MarketCoin'
-import MarketExchange from './market/MarketExchange'
-import NewsFlash from './news/NewsFlash'
-import NewsInfo from './news/NewsInfo'
-import NewsList from './news/NewsList'
 import Home from './other/HomeIndex'
 import OptionalCp from './user/OptionalCp'
 import UserLogin from './user/UserLogin'
 import UserReg from './user/UserReg'
+import TaskList from './task/TaskList'
+import TaskInfo from './task/TaskInfo'
 
-axios.defaults.withCredentials = true
+// axios.defaults.withCredentials = true
 axios.interceptors.request.use(function (config) {
     if (!/^http/.test(config.url)) {
-        // config.url = 'https://www.bitdata.com.cn/' + config.url
-        config.url = 'http://localhost:777/' + config.url
+        config.url = 'http://localhost:23456/' + config.url
     }
 
     return config
@@ -46,8 +39,6 @@ let store = createStore(
     reducers,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
-
-window.ws = new WS()
 
 export default class extends Component {
     constructor (props) {
@@ -73,20 +64,16 @@ export default class extends Component {
                             <Switch>
                                 <LayoutBase exact path="/" component={Home}/>
 
-                                <LayoutBase path="/market/coin" component={MarketCoin}/>
-                                <LayoutBase path="/market/exchange" component={MarketExchange}/>
+                                <LayoutBase path="/task/list" component={TaskList}/>
+                                <LayoutBase path="/task/:id" component={TaskInfo}/>
 
-                                <LayoutBase path="/coin/:scope([\d:]+)" component={CoinInfo}/>
+                                <LayoutBase path="/coin/:scope([\d:]+)" component={TaskList}/>
                                 <LayoutBase path="/exchange/:id" component={ExchangeInfo}/>
 
                                 <LayoutBase path="/user/login" component={UserLogin}/>
                                 <LayoutBase path="/user/reg" component={UserReg}/>
                                 <LayoutBase path="/user/optional/coinpair" component={OptionalCp} needLogin={true}/>
 
-                                <LayoutBase exact path="/news" component={NewsFlash}/>
-                                <LayoutBase path="/news/list" component={NewsList}/>
-                                <LayoutBase path="/news/info" component={NewsInfo}/>
-                                <LayoutBase path="/coin/rating-agency" component={RatingAgency}/>
                             </Switch>
                         </Router>
                     </Provider>
@@ -104,6 +91,7 @@ export default class extends Component {
                 loginChecked: true,
             })
         }, res => {
+            console.log(res)
             res = res.response.data
             // console.log(res.message)
             this.setState({

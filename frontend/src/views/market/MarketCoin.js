@@ -2,7 +2,6 @@ import axios from 'axios'
 import { Button, Loading, Table } from 'element-react'
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import WS from '../../components/ws/WS'
 
 class Row extends Component {
     state = this.props.obj
@@ -16,22 +15,6 @@ class Row extends Component {
                 <td><span className={`num ${this.state.color} ${this.state.bgColor}`}>{this.state.spec.change_pct_view}%</span></td>
             </tr>
         )
-    }
-
-    componentDidMount () {
-        WS.withMarketPriceSpec(this.subName, (obj) => {
-            let t = this.state
-            t.color = obj.change_pct >= 0 ? 'up' : 'down'
-            t.bgColor = obj.price > t.spec.coinbase_price_view ? 'bg-up' : 'bg-down'
-
-            t.spec.coinbase_price_view = obj.price
-            t.spec.change_pct_view = obj.change_pct
-            this.setState({t})
-        })
-    }
-
-    componentWillUnmount () {
-        WS.withMarketPriceSpec(this.subName, null)
     }
 }
 
@@ -72,21 +55,13 @@ export default class extends Component {
 
         axios.get('api/market/coin').then(res => {
             res = res.data
-            const listSub = WS.subMarketPriceSpecSet(res.data.map(v => {
-                return `${v.coinbase_id}`
-            }))
             this.setState({
                 loading: false,
                 list: res.data,
-                listSub: listSub,
             })
         }, res => {
             res = res.response.data
             console.log(res.message)
         })
-    }
-
-    componentWillUnmount () {
-        WS.subMarketPriceSpecSet([])
     }
 }

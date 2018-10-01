@@ -4,8 +4,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import WS from '../../components/ws/WS'
-
 class Row extends Component {
     state = this.props.obj
     subName = `${this.props.obj.coinbase_id}:${this.props.obj.coinquote_id}:${this.props.obj.exchange_id}`
@@ -19,22 +17,6 @@ class Row extends Component {
                 <td><span className={`num ${this.state.color} ${this.state.bgColor}`}>{this.state.spec.change_pct_view}%</span></td>
             </tr>
         )
-    }
-
-    componentDidMount () {
-        WS.withMarketPriceSpec(this.subName, (obj) => {
-            let t = this.state
-            t.color = obj.change_pct >= 0 ? 'up' : 'down'
-            t.bgColor = obj.price > t.spec.coinbase_price_view ? 'bg-up' : 'bg-down'
-
-            t.spec.coinbase_price_view = obj.price
-            t.spec.change_pct_view = obj.change_pct
-            this.setState({t})
-        })
-    }
-
-    componentWillUnmount () {
-        WS.withMarketPriceSpec(this.subName, null)
     }
 }
 
@@ -79,13 +61,9 @@ class App extends Component {
 
         axios.get('api/user/optional/coinpair').then((res) => {
             res = res.data
-            const listSub = WS.subMarketPriceSpecSet(res.data.map(v => {
-                return `${v.coinbase_id}:${v.coinquote_id}:${v.exchange_id}`
-            }))
             this.setState({
                 loading: false,
                 list: res.data,
-                listSub: listSub,
             })
         }).catch((err) => {
             console.log(err.status)
@@ -93,7 +71,6 @@ class App extends Component {
     }
 
     componentWillUnmount () {
-        WS.subMarketPriceSpecSet([])
     }
 }
 

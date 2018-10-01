@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/zx5435/wolan/config"
-	"github.com/zx5435/wolan/http"
+	"github.com/zx5435/wolan/handle"
 )
 
 // git clone https://github.com/golang/crypto.git
@@ -25,9 +25,14 @@ func main() {
 	e.Use(middleware.CORS())
 
 	// Routes
-	e.GET("/", http.Index)
+	e.GET("/", handle.List)
+	e.GET("/api/user/info", handle.List)
 
-	// Start server
+	e.GET("/api/task/list", handle.List)
+	e.GET("/api/task/:id", handle.Info)
+	e.POST("/api/task/:id/run", handle.Run)
+
+	// Run server
 	e.Logger.Fatal(e.Start(":23456"))
 
 	//wCenter := wolan.NewWCenter()

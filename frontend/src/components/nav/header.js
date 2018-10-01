@@ -12,7 +12,7 @@ class App extends Component {
             <div className="bit-header">
                 <Menu className="el-menu-demo" mode="horizontal">
                     <Menu.Item index={'index'}><Link to="/">首页</Link></Menu.Item>
-                    <Menu.Item index={'danbi'}><Link to="/market/coin">单币</Link></Menu.Item>
+                    <Menu.Item index={'danbi'}><Link to="/task/list">Task</Link></Menu.Item>
                     <Menu.Item index={'exchange'}><Link to="/market/exchange">交易所</Link></Menu.Item>
                     <Menu.Item index={'news'}><Link to="/news">资讯</Link></Menu.Item>
                     <Menu.Item index={'zixuan'}><Link to="/user/optional/coinpair">自选</Link></Menu.Item>

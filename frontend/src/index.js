@@ -5,7 +5,7 @@ import './assets/reset.css'
 import registerServiceWorker from './registerServiceWorker'
 import Root from './views/router'
 
-window.title_prefix = ' - 链上智能金融'
+window.title_prefix = ' - wolan'
 window.log = function (...b) {
     console.log('%c %s', 'color:#f0f;background:#eee;', ...b)
 }
