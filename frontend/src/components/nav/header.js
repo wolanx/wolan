@@ -9,21 +9,16 @@ class App extends Component {
         const user = this.props.user
 
         return (
-            <div className="bit-header">
+            <div className="wol-header">
                 <Menu className="el-menu-demo" mode="horizontal">
-                    <Menu.Item index={'index'}><Link to="/">首页</Link></Menu.Item>
-                    <Menu.Item index={'danbi'}><Link to="/task/list">Task</Link></Menu.Item>
-                    <Menu.Item index={'exchange'}><Link to="/market/exchange">交易所</Link></Menu.Item>
-                    <Menu.Item index={'news'}><Link to="/news">资讯</Link></Menu.Item>
-                    <Menu.Item index={'zixuan'}><Link to="/user/optional/coinpair">自选</Link></Menu.Item>
+                    <Menu.Item index={'index'}><Link
+                        to="/">首页</Link></Menu.Item>
+                    <Menu.Item index={'task'}><Link to="/task/list">Task</Link></Menu.Item>
                     {
                         user.id ? (
                             <Menu.Item index={'logout'}><a onClick={this.logout.bind(this)}>{user.phone}注销</a></Menu.Item>
                         ) : (
-                            <div>
-                                <Menu.Item index={'login'}><Link to="/user/login">登录</Link></Menu.Item>
-                                <Menu.Item index={'reg'}><Link to="/user/reg">注册</Link></Menu.Item>
-                            </div>
+                            <Menu.Item index={'login'}><Link to="/user/login">登录</Link></Menu.Item>
                         )
                     }
                 </Menu>
@@ -46,12 +41,12 @@ class App extends Component {
 export default connect(
     (state) => {
         return {
-            user: state.user
+            user: state.user,
         }
     },
     (dispatch) => {
         return {
-            storeUserLogout: () => dispatch({type: 'user/logout'})
+            storeUserLogout: () => dispatch({type: 'user/logout'}),
         }
-    }
+    },
 )(App)

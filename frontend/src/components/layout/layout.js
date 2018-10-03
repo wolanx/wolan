@@ -20,10 +20,10 @@ const LayoutBase = ({component: Component, ...rest, needLogin}) => {
                 <Route {...rest} render={props => (
                     <div className="DefaultLayout">
                         <NavHeader/>
-                        <div className="bit-1200">
+                        <div className="wol-1200">
                             <Component {...props} />
                         </div>
-                        <footer className="bit-footer">Footer</footer>
+                        <footer className="wol-footer">Footer</footer>
                     </div>
                 )}/>
             )}

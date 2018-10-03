@@ -14,7 +14,7 @@ class CoinInfo extends Component {
         return (
             <div>
                 <h1>info {info.id}</h1>
-                <button onClick={this.start.bind(this)}>start</button>
+                <button onClick={this.start.bind(this)}>run</button>
             </div>
         )
     }
