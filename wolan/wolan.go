@@ -65,7 +65,7 @@ func NewWCenter() *WCenter {
 }
 
 func (this *WCenter) Run() {
-	yamlFilename := config.TaskRootPath + "/app-2/wolan.yaml"
+	yamlFilename := config.TaskRootPath + "/cicdcm/wolan.yaml"
 	file, _ := os.Open(yamlFilename)
 	fileText, _ := ioutil.ReadAll(file)
 

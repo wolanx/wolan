@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Loading, Table } from 'element-react'
+import { Button, Loading, Table } from 'element-react'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
@@ -14,7 +14,7 @@ class CoinInfo extends Component {
         return (
             <div>
                 <h1>info {info.id}</h1>
-                <button onClick={this.start.bind(this)}>run</button>
+                <Button onClick={this.start.bind(this)}>Run</Button>
             </div>
         )
     }

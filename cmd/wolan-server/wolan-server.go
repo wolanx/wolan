@@ -7,16 +7,29 @@ import (
 	"github.com/labstack/echo/middleware"
 	_ "github.com/zx5435/wolan/config"
 	"github.com/zx5435/wolan/handle"
+	"github.com/zx5435/wolan/wolan"
 )
-
-// git clone https://github.com/golang/crypto.git
 
 func init() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
 }
 
 func main() {
-	// Echo instance
+	wCenter := wolan.NewWCenter()
+	wCenter.Run()
+	//// step.1 预准备
+	//wCenter.GetCode()
+	//wCenter.DoBuild()
+	//wCenter.PushImage()
+	//// step.2 调度
+	//
+	////return
+	//
+	//wDocker := docker.NewWDocker()
+	//wDocker.Pull()
+	//wDocker.Stop()
+	//wDocker.Deploy()
+
 	e := echo.New()
 
 	// Middleware
@@ -34,19 +47,4 @@ func main() {
 
 	// Run server
 	e.Logger.Fatal(e.Start(":23456"))
-
-	//wCenter := wolan.NewWCenter()
-	//wCenter.Run()
-	//// step.1 预准备
-	//wCenter.GetCode()
-	////wCenter.DoBuild()
-	////wCenter.PushImage()
-	//// step.2 调度
-	//
-	////return
-	//
-	//wDocker := docker.NewWDocker()
-	////wDocker.Pull()
-	//wDocker.Stop()
-	////wDocker.Deploy()
 }

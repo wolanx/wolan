@@ -137,11 +137,11 @@ func (this *WDocker) Run() {
 
 		resp, err := this.cli.ContainerCreate(this.ctx, serviceContainer, serviceHost, serviceNetwork, wCenter.StackName+"_"+serviceName+".1.xxxxx")
 		if err != nil {
-			panic(err)
+			log.Println(err)
 		}
 
 		if err := this.cli.ContainerStart(this.ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-			panic(err)
+			log.Println(err)
 		}
 
 		log.Println(resp.ID)

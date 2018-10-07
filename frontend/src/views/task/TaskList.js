@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Loading, Table } from 'element-react'
+import { Button, Loading, Table, Tag } from 'element-react'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -7,20 +7,44 @@ import { Link } from 'react-router-dom'
 class CoinInfo extends Component {
     state = {
         list: [],
+        columns: [
+            {
+                type: 'index'
+            },
+            {
+                label: '姓名',
+                prop: 'name',
+                width: 200,
+                render: (row) => {
+                    return (
+                        <span>{row.name}</span>
+                    )
+                }
+            },
+            {
+                label: '操作',
+                prop: 'address',
+                render: (row) => {
+                    return (
+                        <div>
+                            <Link to={`/task/${row.name}`}><Button size="small">Info</Button></Link>
+                        </div>
+                    )
+                }
+            }
+        ],
     }
 
     render () {
         return (
             <div>
-                <ul>
-                    {this.state.list.map((v, k) => {
-                        return (
-                            <li key={k}>
-                                <Link to={`/task/${v.name}`}>{v.name}</Link>
-                            </li>
-                        )
-                    })}
-                </ul>
+                <Table
+                    style={{width: '100%'}}
+                    columns={this.state.columns}
+                    data={this.state.list}
+                    border={true}
+                    highlightCurrentRow={true}
+                />
             </div>
         )
     }

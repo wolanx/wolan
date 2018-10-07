@@ -26,6 +26,7 @@ func NewWDocker() *WDocker {
 	wDocker := new(WDocker)
 
 	wDocker.ctx = context.Background()
+
 	//cli, err := client.NewClientWithOpts(client.WithHost("tcp://192.168.199.7:2376"))
 	cli, err := client.NewClientWithOpts()
 	if err != nil {
