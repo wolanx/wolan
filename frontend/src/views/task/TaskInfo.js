@@ -34,7 +34,9 @@ class CoinInfo extends Component {
     }
 
     start () {
-        axios.post(`api/task/${this.id}/run`).then(res => {
+        axios.post(`api/task/${this.id}/run`, {
+            name: this.id
+        }).then(res => {
             res = res.data
             console.log(res.data)
         }, res => {

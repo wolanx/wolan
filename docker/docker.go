@@ -7,15 +7,8 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/zx5435/wolan/wolan"
 	"golang.org/x/net/context"
 )
-
-var wCenter *wolan.WCenter
-
-func init() {
-	wCenter = wolan.NewWCenter()
-}
 
 type WDocker struct {
 	cli *client.Client
@@ -37,12 +30,12 @@ func NewWDocker() *WDocker {
 	return wDocker
 }
 
-func (wDocker *WDocker) Pull() {
+func (d *WDocker) Pull() {
 	log.Println("WDocker::pullImg")
 
 	imgName := "zx5435/cdemo-nginx:a"
 
-	out, err := wDocker.cli.ImagePull(wDocker.ctx, imgName, types.ImagePullOptions{})
+	out, err := d.cli.ImagePull(d.ctx, imgName, types.ImagePullOptions{})
 	if err != nil {
 		panic(err)
 	}

@@ -5,23 +5,16 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/zx5435/wolan/config"
-	"github.com/zx5435/wolan/docker"
 	"log"
+	"github.com/zx5435/wolan/docker"
 )
 
 type Task struct {
 	Name string `json:"name"`
 }
 
-var wDocker *docker.WDocker
-
-func init() {
-	wDocker = docker.NewWDocker()
-	log.Println(wDocker)
-}
-
 func List(c echo.Context) error {
-	tasks := []*Task{}
+	var tasks []*Task
 
 	files, _ := ioutil.ReadDir(config.TaskRootPath)
 	for _, f := range files {
@@ -44,10 +37,17 @@ func Info(c echo.Context) error {
 }
 
 func Run(c echo.Context) error {
-	wDocker.Deploy()
+	name := c.Request().FormValue("name")
+	name = "fs"
+	log.Println(name)
 
 	data := make(map[string]interface{})
 	data["data"] = "start"
+
+	err := docker.GetTask(name).Deploy()
+	if err != nil {
+		data["data"] = err.Error()
+	}
 
 	return c.JSON(200, data)
 }

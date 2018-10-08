@@ -1,4 +1,4 @@
-package wolan
+package docker
 
 import (
 	"encoding/json"
@@ -11,6 +11,7 @@ import (
 	"github.com/zx5435/wolan/config"
 	"github.com/zx5435/wolan/util"
 	"gopkg.in/yaml.v2"
+	"github.com/zx5435/wolan/compose"
 )
 
 type WolanConfig struct {
@@ -30,42 +31,27 @@ type git struct {
 	Branch string `yaml:"branch"`
 }
 
-type WCenter struct {
-	Config    *WolanConfig
-	StackName string
-	WorkDir   string
+type WTask struct {
+	Config        *WolanConfig
+	StackName     string
+	WorkDir       string
+	ComposeConfig *compose.Configs
 }
 
-func quickRun(command string, workDir string) {
-	args := strings.Split(command, " ")
-	log.Println(args)
+func GetTask(name string) *WTask {
+	t := &WTask{}
+	t.Load(name)
 
-	cmd := exec.Command(args[0], args[1:]...)
-	if workDir != "" {
-		cmd.Dir = workDir
-	}
+	t.ComposeConfig = compose.Parse(FileGetContents(t.WorkDir + "/" + t.Config.DockerCompose))
 
-	out, err := cmd.CombinedOutput()
-	log.Println("cmd out:", string(out))
+	log.Println(t)
+	log.Println(t.ComposeConfig)
 
-	if err != nil {
-		panic(err)
-	}
+	return t
 }
 
-var wCenter *WCenter
-
-func NewWCenter() *WCenter {
-	if wCenter != nil {
-		return wCenter
-	}
-
-	wCenter = &WCenter{}
-	return wCenter
-}
-
-func (this *WCenter) Run() {
-	yamlFilename := config.TaskRootPath + "/cicdcm/wolan.yaml"
+func (this *WTask) Load(name string) {
+	yamlFilename := config.TaskRootPath + "/" + name + "/wolan.yaml"
 	file, _ := os.Open(yamlFilename)
 	fileText, _ := ioutil.ReadAll(file)
 
@@ -79,7 +65,7 @@ func (this *WCenter) Run() {
 }
 
 // clone code
-func (this *WCenter) GetCode() {
+func (this *WTask) GetCode() {
 	log.Println("step::GetCode")
 
 	var cmd *exec.Cmd
@@ -99,16 +85,52 @@ func (this *WCenter) GetCode() {
 	}
 }
 
+func quickRun(command string, workDir string) {
+	args := strings.Split(command, " ")
+	log.Println(args)
+
+	cmd := exec.Command(args[0], args[1:]...)
+	if workDir != "" {
+		cmd.Dir = workDir
+	}
+
+	out, err := cmd.CombinedOutput()
+	log.Println("cmd out:", string(out))
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 // 构建
-func (this *WCenter) DoBuild() {
+func (this *WTask) DoBuild() {
 	log.Println("step::DoBuild")
 
 	quickRun("make build-a", this.WorkDir)
 }
 
 // 推送image
-func (this *WCenter) PushImage() {
+func (this *WTask) PushImage() {
 	log.Println("step::PushImage")
 
 	// TODO
+}
+
+func (t *WTask) Deploy() error {
+	log.Println("WDocker::Deploy", t.StackName)
+
+	d := NewWDocker()
+
+	// step.1 networks 网格
+	d.CreateNet(t)
+
+	// step.2 volumes
+
+	// step.3 services 部署多个 container
+	err := d.Run(t)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

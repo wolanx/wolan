@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/middleware"
 	_ "github.com/zx5435/wolan/config"
 	"github.com/zx5435/wolan/handle"
-	"github.com/zx5435/wolan/wolan"
 )
 
 func init() {
@@ -15,12 +14,12 @@ func init() {
 }
 
 func main() {
-	wCenter := wolan.NewWCenter()
-	wCenter.Run()
+	//wTask := wolan.NewwTask()
+	//wTask.Load()
 	//// step.1 预准备
-	//wCenter.GetCode()
-	//wCenter.DoBuild()
-	//wCenter.PushImage()
+	//wTask.GetCode()
+	//wTask.DoBuild()
+	//wTask.PushImage()
 	//// step.2 调度
 	//
 	////return
@@ -45,6 +44,6 @@ func main() {
 	e.GET("/api/task/:id", handle.Info)
 	e.POST("/api/task/:id/run", handle.Run)
 
-	// Run server
+	// Load server
 	e.Logger.Fatal(e.Start(":23456"))
 }
