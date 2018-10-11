@@ -37,8 +37,8 @@ func main() {
 	e.Use(middleware.CORS())
 
 	// Routes
-	e.GET("/", handle.List)
-	e.GET("/api/user/info", handle.List)
+	e.GET("/", handle.Test)
+	e.GET("/api/user/info", handle.Test)
 
 	e.GET("/api/task/list", handle.List)
 	e.GET("/api/task/:id", handle.Info)

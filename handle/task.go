@@ -6,10 +6,18 @@ import (
 	"github.com/labstack/echo"
 	"github.com/zx5435/wolan/config"
 	"github.com/zx5435/wolan/docker"
+	"regexp"
 )
 
 type Task struct {
 	Name string `json:"name"`
+}
+
+func Test(c echo.Context) error {
+	data := make(map[string]interface{})
+	data["data"] = "qwe"
+
+	return c.JSON(200, data)
 }
 
 func List(c echo.Context) error {
@@ -17,9 +25,12 @@ func List(c echo.Context) error {
 
 	files, _ := ioutil.ReadDir(config.TaskRootPath)
 	for _, f := range files {
-		tasks = append(tasks, &Task{
-			Name: f.Name(),
-		})
+		reg := regexp.MustCompile(`^[^.]`)
+		if reg.Match([]byte(f.Name())) {
+			tasks = append(tasks, &Task{
+				Name: f.Name(),
+			})
+		}
 	}
 
 	data := make(map[string]interface{})
