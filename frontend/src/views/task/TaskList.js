@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Button, Loading, Table, Tag } from 'element-react'
+import { Button, Loading, Message, Table, Tag } from 'element-react'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -12,7 +12,7 @@ class CoinInfo extends Component {
                 type: 'index'
             },
             {
-                label: '姓名',
+                label: 'name',
                 prop: 'name',
                 width: 200,
                 render: (row) => {
@@ -22,8 +22,8 @@ class CoinInfo extends Component {
                 }
             },
             {
-                label: '操作',
-                prop: 'address',
+                label: 'opt',
+                prop: 'opt',
                 render: (row) => {
                     return (
                         <div>
@@ -60,6 +60,7 @@ class CoinInfo extends Component {
         }, res => {
             res = res.response.data
             console.log(res.message)
+            Message.error(res.message)
         })
     }
 }

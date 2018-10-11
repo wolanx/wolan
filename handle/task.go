@@ -5,7 +5,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/zx5435/wolan/config"
-	"log"
 	"github.com/zx5435/wolan/docker"
 )
 
@@ -29,24 +28,34 @@ func List(c echo.Context) error {
 	return c.JSON(200, data)
 }
 
+type JsonQuery struct {
+	Name string `json:"name"`
+}
+
 func Info(c echo.Context) error {
+	json := new(JsonQuery)
+	c.Bind(json)
+	task := docker.GetTask(json.Name)
+
 	data := make(map[string]interface{})
-	data["data"] = "info"
+	data["data"] = task
 
 	return c.JSON(200, data)
 }
 
 func Run(c echo.Context) error {
-	name := c.Request().FormValue("name")
-	name = "fs"
-	log.Println(name)
+	json := new(JsonQuery)
+	c.Bind(json)
+
+	task := docker.GetTask(json.Name)
 
 	data := make(map[string]interface{})
-	data["data"] = "start"
+	data["data"] = "success"
 
-	err := docker.GetTask(name).Deploy()
+	err := task.Deploy()
 	if err != nil {
-		data["data"] = err.Error()
+		data["message"] = err.Error()
+		return c.JSON(400, data)
 	}
 
 	return c.JSON(200, data)

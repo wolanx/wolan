@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Button, Loading, Table } from 'element-react'
+import { Button, Loading, Message, MessageBox } from 'element-react'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
@@ -13,7 +13,7 @@ class CoinInfo extends Component {
         const info = this.state.info
         return (
             <div>
-                <h1>info {info.id}</h1>
+                <h1>name: {this.id}</h1>
                 <Button onClick={this.start.bind(this)}>Run</Button>
             </div>
         )
@@ -42,6 +42,7 @@ class CoinInfo extends Component {
         }, res => {
             res = res.response.data
             console.log(res.message)
+            MessageBox.alert(res.message, 'error')
         })
     }
 }

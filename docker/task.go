@@ -44,8 +44,8 @@ func GetTask(name string) *WTask {
 
 	t.ComposeConfig = compose.Parse(FileGetContents(t.WorkDir + "/" + t.Config.DockerCompose))
 
-	log.Println(t)
-	log.Println(t.ComposeConfig)
+	log.Println(t.Config.Git.Url)
+	//fmt.Println(t.ComposeConfig)
 
 	return t
 }
