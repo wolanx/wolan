@@ -11,8 +11,7 @@ class App extends Component {
         return (
             <div className="wol-header">
                 <Menu className="el-menu-demo" mode="horizontal">
-                    <Menu.Item index={'index'}><Link
-                        to="/">首页</Link></Menu.Item>
+                    <Menu.Item index={'index'}><Link to="/">首页</Link></Menu.Item>
                     <Menu.Item index={'task'}><Link to="/task/list">Task</Link></Menu.Item>
                     {
                         user.id ? (

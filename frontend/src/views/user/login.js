@@ -9,8 +9,8 @@ class UserLogin extends Component {
 
         this.state = {
             form: {
-                username: '1381607696',
-                password: 'qwerqwer',
+                username: 'test',
+                password: '',
             },
             rules: {
                 username: [
