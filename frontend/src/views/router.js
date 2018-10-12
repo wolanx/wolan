@@ -18,7 +18,11 @@ import TaskInfo from './task/TaskInfo'
 // axios.defaults.withCredentials = true
 axios.interceptors.request.use(function (config) {
     if (!/^http/.test(config.url)) {
-        config.url = 'http://localhost:23456/' + config.url
+        if (process.env.NODE_ENV === 'development') {
+            config.url = 'http://localhost:23456/' + config.url
+        } else {
+            config.url = '/' + config.url
+        }
     }
 
     return config

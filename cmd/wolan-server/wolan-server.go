@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/middleware"
 	_ "github.com/zx5435/wolan/config"
 	"github.com/zx5435/wolan/handle"
+	"regexp"
 )
 
 func init() {
@@ -14,20 +15,11 @@ func init() {
 }
 
 func main() {
-	//wTask := wolan.NewwTask()
-	//wTask.Load()
-	//// step.1 预准备
-	//wTask.GetCode()
-	//wTask.DoBuild()
-	//wTask.PushImage()
-	//// step.2 调度
-	//
-	////return
-	//
-	//wDocker := docker.NewWDocker()
-	//wDocker.Pull()
-	//wDocker.Stop()
-	//wDocker.Deploy()
+	echo.NotFoundHandler = func(c echo.Context) error {
+		// render your 404 page
+		return c.File("frontend/build/index.html")
+		//return c.String(http.StatusNotFound, "404")
+	}
 
 	e := echo.New()
 
@@ -37,12 +29,24 @@ func main() {
 	e.Use(middleware.CORS())
 
 	// Routes
-	e.GET("/", handle.Test)
 	e.GET("/api/user/info", handle.Test)
 
 	e.GET("/api/task/list", handle.List)
 	e.GET("/api/task/:id", handle.Info)
 	e.POST("/api/task/:id/run", handle.Run)
+
+	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Skipper: func(c echo.Context) bool {
+			reg := regexp.MustCompile(`api`)
+			if reg.Match([]byte(c.Request().RequestURI)) {
+				return true
+			} else {
+				return false
+			}
+		},
+		Root:   "frontend/build",
+		Browse: true,
+	}))
 
 	// Load server
 	e.Logger.Fatal(e.Start(":23456"))

@@ -14,4 +14,4 @@ document.setTitle = function (name) {
 }
 
 ReactDOM.render(<Root/>, document.getElementById('root'))
-registerServiceWorker()
+// registerServiceWorker()
