@@ -4,7 +4,10 @@ default:
 build: build-fe build-be build-pkg
 
 build-be:
-	docker run -it --rm -v "$$GOPATH/src":/go/src -w /go/src/github.com/zx5435/wolan/cmd/wolan-server golang:1.10.2 \
+	docker run -it --rm \
+	    -v "$$GOPATH/src":/go/src \
+	    -w /go/src/github.com/zx5435/wolan/cmd/wolan-server \
+	    golang:1.10.2 \
         go build -v -ldflags "-linkmode external -extldflags -static -w" -o wolan-server
 
 build-fe:
@@ -12,6 +15,19 @@ build-fe:
 
 build-pkg:
 	docker build -f __cicd__/Dockerfile -t zx5435/wolan .
+
+ingress-build:
+	docker run -it --rm \
+	    -v "$$GOPATH/src":/go/src \
+	    -w /go/src/github.com/zx5435/wolan/cmd/wolan-ingress \
+	    golang:1.10.2 \
+        go build -v -ldflags "-linkmode external -extldflags -static -w" -o wolan-ingress
+
+ingress-pkg:
+	docker build -f __cicd__/Dockerfile.ingress -t zx5435/wolan-ingress .
+
+ingress-test:
+	docker run -it -d --name wolan-ingress -p2323:80 zx5435/wolan-ingress
 
 restart: down up
 
