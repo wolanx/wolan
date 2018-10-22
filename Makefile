@@ -24,10 +24,10 @@ ingress-build:
         go build -v -ldflags "-linkmode external -extldflags -static -w" -o wolan-ingress
 
 ingress-pkg:
-	docker build -f __cicd__/Dockerfile.ingress -t zx5435/wolan-ingress .
+	docker build -f __cicd__/Dockerfile.ingress -t zx5435/wolan:ingress .
 
 ingress-test:
-	docker run -it -d --name wolan-ingress -p2323:80 zx5435/wolan-ingress
+	docker run -it -d --name wolan-ingress -p2323:80 zx5435/wolan:ingress
 
 restart: down up
 

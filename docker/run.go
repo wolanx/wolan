@@ -127,3 +127,60 @@ func (d *WDocker) Run(t *WTask) error {
 	}
 	return nil
 }
+
+func QuickPortMap(a []string) nat.PortMap {
+	portMap := make(nat.PortMap)
+	for _, portStr := range a {
+		portArr := strings.Split(portStr, ":")
+
+		var (
+			hostIP     string
+			hostPort   string
+			targetPort nat.Port
+		)
+		switch len(portArr) {
+		case 3:
+			hostIP = portArr[0]
+			hostPort = portArr[1]
+			targetPort = nat.Port(portArr[2])
+		case 2:
+			hostIP = ""
+			hostPort = portArr[0]
+			targetPort = nat.Port(portArr[1])
+		case 1:
+			hostIP = ""
+			hostPort = ""
+			targetPort = nat.Port(portArr[0])
+		default:
+			panic(errors.New("port arr : !<=3"))
+		}
+
+		//log.Printf("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
+
+		ports := []nat.PortBinding{
+			{
+				HostIP:   hostIP,
+				HostPort: hostPort,
+			},
+		}
+		//exPortMap[targetPort] = struct{}{}
+		portMap[targetPort] = ports
+	}
+	return portMap
+}
+
+func (d *WDocker) RunOne(name string, c *container.Config, h *container.HostConfig, n *network.NetworkingConfig) error {
+	resp, err := d.cli.ContainerCreate(d.ctx, c, h, n, name)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	if err := d.cli.ContainerStart(d.ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+		log.Println(err)
+		return err
+	}
+
+	log.Println(resp.ID)
+	return nil
+}

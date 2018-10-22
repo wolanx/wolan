@@ -14,10 +14,12 @@ docker run -it -d --name wolan -p 4321:23456 \
 open http://localhost:4321
 ```
 
-# 简单的自动部署工具，将具有
+# include
 
-- [ ] manage
+- [x] page
     - [x] task run
+- [x] ingress
+    - [ ] auto https
 - [ ] ci
 - [ ] cd
 - [ ] gateway

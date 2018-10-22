@@ -8,6 +8,7 @@ import (
 	_ "github.com/zx5435/wolan/config"
 	"github.com/zx5435/wolan/handle"
 	"regexp"
+	"net/http"
 )
 
 func init() {
@@ -16,9 +17,13 @@ func init() {
 
 func main() {
 	echo.NotFoundHandler = func(c echo.Context) error {
-		// render your 404 page
-		return c.File("frontend/build/index.html")
-		//return c.String(http.StatusNotFound, "404")
+		reg := regexp.MustCompile("api")
+		log.Println(c.Request().RequestURI, reg.Match([]byte(c.Request().RequestURI)))
+		if reg.Match([]byte(c.Request().RequestURI)) {
+			return c.String(http.StatusNotFound, `{"name":"Not Found","message":"页面未找到。"}`)
+		} else {
+			return c.File("frontend/build/index.html")
+		}
 	}
 
 	e := echo.New()
@@ -28,25 +33,15 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	// Routes
+	// user
 	e.GET("/api/user/info", handle.Test)
-
+	// ingress
+	e.GET("/api/ingress/start", handle.IngressStart)
+	e.GET("/api/ingress/reload", handle.Test)
+	// task
 	e.GET("/api/task/list", handle.List)
 	e.GET("/api/task/:id", handle.Info)
 	e.POST("/api/task/:id/run", handle.Run)
-
-	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Skipper: func(c echo.Context) bool {
-			reg := regexp.MustCompile(`api`)
-			if reg.Match([]byte(c.Request().RequestURI)) {
-				return true
-			} else {
-				return false
-			}
-		},
-		Root:   "frontend/build",
-		Browse: true,
-	}))
 
 	// Load server
 	e.Logger.Fatal(e.Start(":23456"))
