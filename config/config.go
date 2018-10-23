@@ -7,9 +7,10 @@ import (
 )
 
 var (
-	WorkPath     string
-	TaskRootPath string
-	GitRootPath  string
+	WorkPath        string
+	TaskRootPath    string
+	GitRootPath     string
+	IngressRootPath string
 )
 
 func init() {
@@ -20,4 +21,5 @@ func init() {
 
 	TaskRootPath = WorkPath + "/task"
 	GitRootPath = WorkPath + "/git"
+	IngressRootPath = WorkPath + "/ingress"
 }

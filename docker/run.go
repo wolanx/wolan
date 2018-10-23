@@ -54,48 +54,9 @@ func (d *WDocker) Run(t *WTask) error {
 		serviceContainer.Labels = labels
 		serviceContainer.Image = service.Image
 
-		exPortMap := make(nat.PortSet)
-		portMap := make(nat.PortMap)
-
 		serviceHost := &container.HostConfig{}
-		for _, portStr := range service.Ports {
-			portArr := strings.Split(portStr, ":")
 
-			var (
-				hostIP     string
-				hostPort   string
-				targetPort nat.Port
-			)
-			switch len(portArr) {
-			case 3:
-				hostIP = portArr[0]
-				hostPort = portArr[1]
-				targetPort = nat.Port(portArr[2])
-			case 2:
-				hostIP = ""
-				hostPort = portArr[0]
-				targetPort = nat.Port(portArr[1])
-			case 1:
-				hostIP = ""
-				hostPort = ""
-				targetPort = nat.Port(portArr[0])
-			default:
-				panic(errors.New("port arr : !<=3"))
-			}
-
-			//log.Printf("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
-
-			ports := []nat.PortBinding{
-				{
-					HostIP:   hostIP,
-					HostPort: hostPort,
-				},
-			}
-			exPortMap[targetPort] = struct{}{}
-			portMap[targetPort] = ports
-		}
-		serviceContainer.ExposedPorts = exPortMap
-		serviceHost.PortBindings = portMap
+		serviceContainer.ExposedPorts, serviceHost.PortBindings = QuickPortMap(service.Ports)
 
 		endpointsConfig := make(map[string]*network.EndpointSettings)
 		for _, networkName := range service.Networks {
@@ -128,9 +89,10 @@ func (d *WDocker) Run(t *WTask) error {
 	return nil
 }
 
-func QuickPortMap(a []string) nat.PortMap {
+func QuickPortMap(portStrs []string) (nat.PortSet, nat.PortMap) {
+	exPortMap := make(nat.PortSet)
 	portMap := make(nat.PortMap)
-	for _, portStr := range a {
+	for _, portStr := range portStrs {
 		portArr := strings.Split(portStr, ":")
 
 		var (
@@ -163,10 +125,10 @@ func QuickPortMap(a []string) nat.PortMap {
 				HostPort: hostPort,
 			},
 		}
-		//exPortMap[targetPort] = struct{}{}
+		exPortMap[targetPort] = struct{}{}
 		portMap[targetPort] = ports
 	}
-	return portMap
+	return exPortMap, portMap
 }
 
 func (d *WDocker) RunOne(name string, c *container.Config, h *container.HostConfig, n *network.NetworkingConfig) error {
