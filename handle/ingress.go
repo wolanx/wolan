@@ -32,8 +32,8 @@ func IngressStart(c echo.Context) error {
 	}
 
 	dConfig.ExposedPorts, dHost.PortBindings = docker.QuickPortMap([]string{
-		"80:80",
 		"443:443",
+		"80:80",
 	})
 
 	err := d.RunOne("wolan-ingress", dConfig, dHost, &network.NetworkingConfig{})

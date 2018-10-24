@@ -1,3 +1,7 @@
 FROM nginx:1.13.0-alpine
 
+RUN apk --no-cache add ca-certificates tree \
+    && alias ll='ls -l'
+
+COPY ./tpl/ingress/rc /go/src/github.com/zx5435/wolan/tpl/ingress/rc
 COPY ./cmd/wolan-ingress/wolan-ingress /usr/bin/wolan-ingress

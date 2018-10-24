@@ -8,7 +8,7 @@ build-be:
 	    -v "$$GOPATH/src":/go/src \
 	    -w /go/src/github.com/zx5435/wolan/cmd/wolan-server \
 	    golang:1.10.2 \
-        go build -v -ldflags "-linkmode external -extldflags -static -w" -o wolan-server
+        sh -c "CGO_ENABLED=0 GOOS=linux go build -v -installsuffix cgo -o wolan-server"
 
 build-fe:
 	cd frontend && npm run build
@@ -21,7 +21,7 @@ ingress-build:
 	    -v "$$GOPATH/src":/go/src \
 	    -w /go/src/github.com/zx5435/wolan/cmd/wolan-ingress \
 	    golang:1.10.2 \
-        go build -v -ldflags "-linkmode external -extldflags -static -w" -o wolan-ingress
+        sh -c "CGO_ENABLED=0 GOOS=linux go build -v -installsuffix cgo -o wolan-ingress"
 
 ingress-pkg:
 	docker build -f __cicd__/Dockerfile.ingress -t zx5435/wolan:ingress .
