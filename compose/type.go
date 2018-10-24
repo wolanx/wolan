@@ -8,7 +8,7 @@ import (
 //"github.com/docker/docker/api/types/container"
 //"github.com/docker/docker/api/types/network"
 //type Service struct {
-//	Container *container.Config
+//	Container *container.WolanYAML
 //	Host      *container.HostConfig
 //	Network   *network.NetworkingConfig
 //}

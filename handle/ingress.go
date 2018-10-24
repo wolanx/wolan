@@ -5,12 +5,22 @@ import (
 	"github.com/zx5435/wolan/docker"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/zx5435/wolan/config"
+	"log"
 )
 
 func IngressStart(c echo.Context) error {
+	task := docker.GetTask("ingress")
+
 	volumes := make(map[string]struct{})
-	volumes[config.IngressRootPath] = struct{}{}
+	volumes[task.TaskDir] = struct{}{}
+
+	binds := []string{task.TaskDir + "/conf.d:/etc/nginx/conf.d:rw"}
+
+	for _, dir := range task.WolanYAML.Volumes {
+		binds = append(binds, dir)
+	}
+
+	log.Println(binds)
 
 	d := docker.NewWDocker()
 	dConfig := &container.Config{
@@ -18,7 +28,7 @@ func IngressStart(c echo.Context) error {
 		Volumes: volumes,
 	}
 	dHost := &container.HostConfig{
-		Binds: []string{config.IngressRootPath + "/conf.d:/etc/nginx/conf.d:rw"},
+		Binds: binds,
 	}
 
 	dConfig.ExposedPorts, dHost.PortBindings = docker.QuickPortMap([]string{

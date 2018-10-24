@@ -19,6 +19,7 @@ type WolanConfig struct {
 	Name          string `yaml:"name"`
 	Git           git
 	DockerCompose string `yaml:"docker-compose"`
+	Volumes       []string
 }
 
 func (this *WolanConfig) String() string {
@@ -32,9 +33,10 @@ type git struct {
 }
 
 type WTask struct {
-	Config        *WolanConfig
+	WolanYAML     *WolanConfig
 	StackName     string
-	WorkDir       string
+	GitDir        string
+	TaskDir       string
 	ComposeConfig *compose.Configs
 }
 
@@ -42,10 +44,9 @@ func GetTask(name string) *WTask {
 	t := &WTask{}
 	t.Load(name)
 
-	t.ComposeConfig = compose.Parse(FileGetContents(t.WorkDir + "/" + t.Config.DockerCompose))
+	t.ComposeConfig = compose.Parse(FileGetContents(t.GitDir + "/" + t.WolanYAML.DockerCompose))
 
-	log.Println(t.Config.Git.Url)
-	//fmt.Println(t.ComposeConfig)
+	log.Println(t.WolanYAML.Git.Url)
 
 	return t
 }
@@ -57,10 +58,11 @@ func (this *WTask) Load(name string) {
 
 	wolanConfig := &WolanConfig{}
 	yaml.Unmarshal([]byte(fileText), wolanConfig)
-	this.Config = wolanConfig
+	this.WolanYAML = wolanConfig
 
 	hashName := wolanConfig.Name // TODO
-	this.WorkDir = config.GitRootPath + "/" + hashName
+	this.GitDir = config.GitRootPath + "/" + hashName
+	this.TaskDir = config.TaskRootPath + "/" + name
 	this.StackName = wolanConfig.Name
 }
 
@@ -70,11 +72,11 @@ func (this *WTask) GetCode() {
 
 	var cmd *exec.Cmd
 
-	if ok, _ := util.PathExists(this.WorkDir); ok {
+	if ok, _ := util.PathExists(this.GitDir); ok {
 		cmd = exec.Command("git", "pull")
-		cmd.Dir = this.WorkDir
+		cmd.Dir = this.GitDir
 	} else {
-		cmd = exec.Command("git", "clone", this.Config.Git.Url, this.WorkDir)
+		cmd = exec.Command("git", "clone", this.WolanYAML.Git.Url, this.GitDir)
 	}
 
 	out, err := cmd.CombinedOutput()
@@ -106,7 +108,7 @@ func quickRun(command string, workDir string) {
 func (this *WTask) DoBuild() {
 	log.Println("step::DoBuild")
 
-	quickRun("make build-a", this.WorkDir)
+	quickRun("make build-a", this.GitDir)
 }
 
 // 推送image
