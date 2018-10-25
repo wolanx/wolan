@@ -38,7 +38,7 @@ func init() {
 	siteRootDir = os.Getenv("NGX_SITE_ROOT")
 
 	if configDir == "" {
-		configDir = "~/.config/ngxpkg"
+		configDir = "/root/ngxpkg"
 	}
 
 	if directoryURL == "" {

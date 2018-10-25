@@ -8,8 +8,10 @@ import (
 	"fmt"
 	"flag"
 	"sync"
-	"log"
 	"runtime"
+	log "github.com/sirupsen/logrus"
+	"strconv"
+	"strings"
 )
 
 var (
@@ -18,7 +20,7 @@ var (
 )
 
 func MkdirAll(dir string, perm os.FileMode) error {
-	log.Println("mkdir", dir)
+	LogInfoNum(2)("mkdir -p ", dir)
 	return os.MkdirAll(dir, perm)
 }
 
@@ -76,24 +78,6 @@ func UsageAndExit(msg string) {
 	os.Exit(1)
 }
 
-func logf(format string, args ...interface{}) {
-	_, file, line, tf := runtime.Caller(1)
-	if tf {
-		log.Printf("%s:%d", file, line)
-	}
-	log.Printf(format, args...)
-}
-
-func Errorf(format string, args ...interface{}) {
-	logf(format, args...)
-	SetExitStatus(1)
-}
-
-func Fatalf(format string, args ...interface{}) {
-	Errorf(format, args...)
-	Exit()
-}
-
 func SetExitStatus(n int) {
 	exitMu.Lock()
 	if exitStatus < n {
@@ -104,4 +88,52 @@ func SetExitStatus(n int) {
 
 func Exit() {
 	os.Exit(exitStatus)
+}
+
+func CutName(a string) string {
+	return strings.Replace(a, "/go/src/github.com/zx5435/wolan/", "", 1)
+}
+
+func LogInfo(args ...interface{}) {
+	_, file, no, _ := runtime.Caller(1)
+	log.WithFields(log.Fields{
+		"file": CutName(file) + ":" + strconv.Itoa(no),
+	}).Info(args...)
+}
+
+func LogWarn(args ...interface{}) {
+	_, file, no, _ := runtime.Caller(1)
+	log.WithFields(log.Fields{
+		"file": CutName(file) + ":" + strconv.Itoa(no),
+	}).Warn(args...)
+}
+
+func LogInfoNum(n int) func(args ...interface{}) {
+	_, file, no, _ := runtime.Caller(n)
+	return log.WithFields(log.Fields{
+		"file": CutName(file) + ":" + strconv.Itoa(no),
+	}).Info
+}
+
+func LogInfof(a string, args ...interface{}) {
+	_, file, no, _ := runtime.Caller(1)
+	log.WithFields(log.Fields{
+		"file": CutName(file) + ":" + strconv.Itoa(no),
+	}).Infof(a, args...)
+}
+
+func Errorf(format string, args ...interface{}) {
+	_, file, no, _ := runtime.Caller(1)
+	log.WithFields(log.Fields{
+		"file": CutName(file) + ":" + strconv.Itoa(no),
+	}).Errorf(format, args...)
+	SetExitStatus(1)
+}
+
+func Fatalf(format string, args ...interface{}) {
+	_, file, no, _ := runtime.Caller(1)
+	log.WithFields(log.Fields{
+		"file": CutName(file) + ":" + strconv.Itoa(no),
+	}).Errorf(format, args...)
+	Exit()
 }

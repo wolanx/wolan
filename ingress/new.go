@@ -17,6 +17,7 @@ import (
 
 	"golang.org/x/crypto/acme"
 	"log"
+	"fmt"
 )
 
 func RunNew(args []string) {
@@ -84,7 +85,7 @@ func RunNew(args []string) {
 
 		if err := writeTpl(confTpl, domainConfPath, data); err != nil {
 			if os.IsExist(err) {
-				logf("%s conf: %v", domain, err)
+				LogWarn(fmt.Sprintf("%s conf: %v", domain, err))
 				continue
 			} else {
 				Fatalf("%s conf: %v", domain, err)
@@ -98,7 +99,7 @@ func RunNew(args []string) {
 		}
 
 		if err := writeTpl(indexTpl, domainIndexPath, data); err != nil {
-			logf("%s index: %v", domain, err)
+			LogInfof("%s index: %v", domain, err)
 		}
 	}
 

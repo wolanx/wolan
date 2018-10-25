@@ -2,14 +2,14 @@ package main
 
 import (
 	"flag"
-	"log"
 	"github.com/zx5435/wolan/ingress"
+	log "github.com/sirupsen/logrus"
 )
 
 // docker cp ./cmd/wolan-ingress/wolan-ingress wolan-ingress:/usr/bin/wolan-ingress
 // docker cp ./tpl/ingress/rc wolan-ingress:/go/src/github.com/zx5435/wolan/tpl/ingress/rc
 func main() {
-	log.SetFlags(log.Lshortfile | log.LstdFlags)
+	log.SetFormatter(&log.TextFormatter{})
 
 	var action string
 	var domains Domains
@@ -21,10 +21,10 @@ func main() {
 
 	switch action {
 	case "new":
-		log.Println(action, domains)
+		ingress.LogInfo(action, domains)
 		ingress.RunNew(domains)
 	case "renew":
-		log.Println(action, domains)
+		ingress.LogInfo(action, domains)
 		ingress.RunRenew(domains)
 	default:
 		ingress.UsageAndExit("-s cannot be new|renew.")

@@ -23,7 +23,7 @@ func RunRenew(args []string) {
 		domainConfPath := filepath.Join(siteConfDir, domain+".conf")
 
 		if _, err := os.Stat(domainConfPath); os.IsNotExist(err) {
-			logf("%s conf: %v", domain, err)
+			LogInfof("%s conf: %v", domain, err)
 			continue
 		}
 
@@ -42,14 +42,14 @@ func RunRenew(args []string) {
 			}
 
 			if !strings.Contains(c.Issuer.CommonName, "Let's Encrypt") {
-				logf("%s Issuer '%s' not support acme, skip.", filepath.Base(cert.fullchain), c.Issuer.CommonName)
+				LogInfof("%s Issuer '%s' not support acme, skip.", filepath.Base(cert.fullchain), c.Issuer.CommonName)
 				continue
 			}
 
 			days := int(c.NotAfter.Sub(time.Now()).Hours() / 24)
 
 			if days > allowRenewDays {
-				logf("%s %d days valid, skip.", filepath.Base(cert.fullchain), days)
+				LogInfof("%s %d days valid, skip.", filepath.Base(cert.fullchain), days)
 				continue
 			}
 
