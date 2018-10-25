@@ -15,23 +15,9 @@ import (
 	"golang.org/x/crypto/acme"
 )
 
-var (
-	cmdRenew = &cmd{
-		run:       runRenew,
-		UsageLine: "renew [domain ...]",
-		Short:     "renew ssl certificates base on domain conf",
-		Long: `
-Parse domain conf and renew ssl certificates.
-If not domain input, will parse all domain conf at NGX_SITE_CONFIG dir.
-`,
-	}
-)
-
 func runRenew(args []string) {
-
 	var client *acme.Client
 	certExpiry := 365 * 24 * time.Hour
-	certBundle := true
 
 	for _, domain := range args {
 		domainConfPath := filepath.Join(siteConfDir, domain+".conf")
@@ -44,7 +30,7 @@ func runRenew(args []string) {
 		conf, err := parseSiteConf(domainConfPath)
 
 		if err != nil {
-			fatalf("%s conf: %v", domain, err)
+			Fatalf("%s conf: %v", domain, err)
 		}
 
 		for _, cert := range conf.Certificates {
@@ -52,7 +38,7 @@ func runRenew(args []string) {
 			c, err := parseCertificate(cert.fullchain)
 
 			if err != nil {
-				fatalf("%s cert: %v", domain, err)
+				Fatalf("%s cert: %v", domain, err)
 			}
 
 			if !strings.Contains(c.Issuer.CommonName, "Let's Encrypt") {
@@ -72,7 +58,7 @@ func runRenew(args []string) {
 				accountKey, err := anyKey(filepath.Join(configDir, accountKeyFile))
 
 				if err != nil {
-					fatalf("account key: %v", err)
+					Fatalf("account key: %v", err)
 				}
 
 				client = &acme.Client{
@@ -82,7 +68,7 @@ func runRenew(args []string) {
 
 				if _, err := readConfig(); os.IsNotExist(err) {
 					if err := register(client); err != nil {
-						fatalf("register: %v", err)
+						Fatalf("register: %v", err)
 					}
 				}
 			}
@@ -95,30 +81,30 @@ func runRenew(args []string) {
 			privkey, err := memKey(cert.privkey)
 
 			if err != nil {
-				fatalf("privkey: %v", err)
+				Fatalf("privkey: %v", err)
 			}
 
 			csr, err := x509.CreateCertificateRequest(rand.Reader, req, privkey)
 
 			if err != nil {
-				fatalf("csr: %v", err)
+				Fatalf("csr: %v", err)
 			}
 
 			for _, dnsName := range c.DNSNames {
 				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 
 				if err := authz(ctx, client, conf.DomainPublicDir, dnsName); err != nil {
-					fatalf("authz %s: %v", dnsName, err)
+					Fatalf("authz %s: %v", dnsName, err)
 				}
 				cancel()
 			}
 
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 			defer cancel()
-			certs, _, err := client.CreateCert(ctx, csr, certExpiry, certBundle)
+			certs, _, err := client.CreateCert(ctx, csr, certExpiry, true)
 
 			if err != nil {
-				fatalf("cert: %v", err)
+				Fatalf("cert: %v", err)
 			}
 
 			var pemcert []byte
@@ -128,18 +114,18 @@ func runRenew(args []string) {
 			}
 
 			if err := writeKey(cert.privkey, privkey); err != nil {
-				fatalf("privkey: %v", err)
+				Fatalf("privkey: %v", err)
 			}
 
 			if err := ioutil.WriteFile(cert.fullchain, pemcert, 0644); err != nil {
-				fatalf("cert: %v", err)
+				Fatalf("cert: %v", err)
 			}
 		}
 	}
 
 	if client != nil {
-		if err := nginxReload(); err != nil {
-			fatalf("nginx: %v", err)
+		if err := NginxReload(); err != nil {
+			Fatalf("nginx: %v", err)
 		}
 	}
 }

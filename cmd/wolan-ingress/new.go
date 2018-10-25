@@ -19,57 +19,45 @@ import (
 	"log"
 )
 
-var (
-	cmdNew = &cmd{
-		run:       runNew,
-		UsageLine: "new domain [domain ...]",
-		Short:     "create new sites",
-		Long: `
-create new sites base on template site.conf and apply certs.
-
-`,
-	}
-)
-
 func runNew(args []string) {
 	if len(args) == 0 {
-		fatalf("no domain specified")
+		Fatalf("no domain specified")
 	}
 
-	if err := mkdirAll(configDir, 0700); err != nil {
-		fatalf("config dir: %v", err)
+	if err := MkdirAll(configDir, 0700); err != nil {
+		Fatalf("config dir: %v", err)
 	}
 
-	if err := mkdirAll(siteConfDir, 0700); err != nil {
-		fatalf("site conf dir: %v", err)
+	if err := MkdirAll(siteConfDir, 0700); err != nil {
+		Fatalf("site conf dir: %v", err)
 	}
 
-	if err := mkdirAll(siteRootDir, 0755); err != nil {
-		fatalf("site root dir: %v", err)
+	if err := MkdirAll(siteRootDir, 0755); err != nil {
+		Fatalf("site root dir: %v", err)
 	}
 
 	conf, err := fetchResource(siteConfFile)
 
 	if err != nil {
-		fatalf("read conf: %v", err)
+		Fatalf("read conf: %v", err)
 	}
 
 	index, err := fetchResource(siteIndexFile)
 
 	if err != nil {
-		fatalf("read index: %v", err)
+		Fatalf("read index: %v", err)
 	}
 
 	confTpl, err := template.New("siteConf").Parse(string(conf))
 
 	if err != nil {
-		fatalf("parse conf: %v", err)
+		Fatalf("parse conf: %v", err)
 	}
 
 	indexTpl, err := template.New("siteIndex").Parse(string(index))
 
 	if err != nil {
-		fatalf("parse index: %v", err)
+		Fatalf("parse index: %v", err)
 	}
 
 	var domains []string
@@ -80,8 +68,8 @@ func runNew(args []string) {
 		domainPublicDir := filepath.Join(domainRootDir, "public")
 		domainIndexPath := filepath.Join(domainPublicDir, siteIndexFile)
 
-		if err := mkdirAll(domainRootDir, 0755); err != nil {
-			fatalf("%s root: %v", domain, err)
+		if err := MkdirAll(domainRootDir, 0755); err != nil {
+			Fatalf("%s root: %v", domain, err)
 		}
 
 		data := struct {
@@ -99,14 +87,14 @@ func runNew(args []string) {
 				logf("%s conf: %v", domain, err)
 				continue
 			} else {
-				fatalf("%s conf: %v", domain, err)
+				Fatalf("%s conf: %v", domain, err)
 			}
 		}
 
 		domains = append(domains, domain)
 
-		if err := mkdirAll(domainPublicDir, 0755); err != nil {
-			fatalf("%s public: %v", domain, err)
+		if err := MkdirAll(domainPublicDir, 0755); err != nil {
+			Fatalf("%s public: %v", domain, err)
 		}
 
 		if err := writeTpl(indexTpl, domainIndexPath, data); err != nil {
@@ -118,8 +106,8 @@ func runNew(args []string) {
 
 	if len(domains) > 0 {
 
-		if err := nginxReload(); err != nil {
-			fatalf("nginx: %v", err)
+		if err := NginxReload(); err != nil {
+			Fatalf("nginx: %v", err)
 		}
 
 		time.Sleep(time.Second * 5)
@@ -127,7 +115,7 @@ func runNew(args []string) {
 		accountKey, err := anyKey(filepath.Join(configDir, accountKeyFile))
 
 		if err != nil {
-			fatalf("account key: %v", err)
+			Fatalf("account key: %v", err)
 		}
 
 		client = &acme.Client{
@@ -137,13 +125,12 @@ func runNew(args []string) {
 
 		if _, err := readConfig(); os.IsNotExist(err) {
 			if err := register(client); err != nil {
-				fatalf("register: %v", err)
+				Fatalf("register: %v", err)
 			}
 		}
 	}
 
 	certExpiry := 365 * 24 * time.Hour
-	certBundle := true
 
 	for _, domain := range domains {
 		log.Println(domain)
@@ -155,7 +142,7 @@ func runNew(args []string) {
 		//ipArr = []net.IP{[]byte("101.132.77.68")}
 
 		if err != nil {
-			fatalf("%s lookup: %v", domain, err)
+			Fatalf("%s lookup: %v", domain, err)
 		}
 
 		domainConfPath := filepath.Join(siteConfDir, domain+".conf")
@@ -173,25 +160,25 @@ func runNew(args []string) {
 		}
 
 		if err := editTpl(confTpl, domainConfPath, data); err != nil {
-			fatalf("%s conf: %v", domain, err)
+			Fatalf("%s conf: %v", domain, err)
 		}
 
 		conf, err := parseSiteConf(domainConfPath)
 
 		if err != nil {
-			fatalf("%s conf: %v", domain, err)
+			Fatalf("%s conf: %v", domain, err)
 		}
 
 		if err := writeResource(conf.SslDHParam); err != nil {
-			fatalf("dhparam: %v", err)
+			Fatalf("dhparam: %v", err)
 		}
 
 		if err := writeResource(conf.SslSessionTicketKey); err != nil {
-			fatalf("ticket: %v", err)
+			Fatalf("ticket: %v", err)
 		}
 
 		if err := writeResource(conf.SslTrustedCertificate); err != nil {
-			fatalf("%s ocsp: %v", domain, err)
+			Fatalf("%s ocsp: %v", domain, err)
 		}
 
 		req := &x509.CertificateRequest{
@@ -214,13 +201,13 @@ func runNew(args []string) {
 		for _, cert := range conf.Certificates {
 
 			if err := sameDir(cert.privkey, 0700); err != nil {
-				fatalf("dir: %v", err)
+				Fatalf("dir: %v", err)
 			}
 
 			privkey, err := anyKey(cert.privkey)
 
 			if err != nil {
-				fatalf("privkey: %v", err)
+				Fatalf("privkey: %v", err)
 			}
 
 			req.DNSNames = dnsNames
@@ -228,24 +215,24 @@ func runNew(args []string) {
 			csr, err := x509.CreateCertificateRequest(rand.Reader, req, privkey)
 
 			if err != nil {
-				fatalf("csr: %v", err)
+				Fatalf("csr: %v", err)
 			}
 
 			for _, dnsName := range dnsNames {
 				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 
 				if err := authz(ctx, client, domainPublicDir, dnsName); err != nil {
-					fatalf("authz %s: %v", dnsName, err)
+					Fatalf("authz %s: %v", dnsName, err)
 				}
 				cancel()
 			}
 
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 			defer cancel()
-			certs, _, err := client.CreateCert(ctx, csr, certExpiry, certBundle)
+			certs, _, err := client.CreateCert(ctx, csr, certExpiry, true)
 
 			if err != nil {
-				fatalf("cert: %v", err)
+				Fatalf("cert: %v", err)
 			}
 
 			var pemcert []byte
@@ -255,13 +242,13 @@ func runNew(args []string) {
 			}
 
 			if err := ioutil.WriteFile(cert.fullchain, pemcert, 0644); err != nil {
-				fatalf("cert: %v", err)
+				Fatalf("cert: %v", err)
 			}
 
 		}
 
-		if err := nginxReload(); err != nil {
-			fatalf("nginx: %v", err)
+		if err := NginxReload(); err != nil {
+			Fatalf("nginx: %v", err)
 		}
 	}
 }

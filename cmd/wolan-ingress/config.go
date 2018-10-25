@@ -8,13 +8,13 @@ import (
 	"strconv"
 
 	"golang.org/x/crypto/acme"
+	"log"
 )
 
 const (
 	accountFile    = "account.json"
 	accountKeyFile = "account.ecdsa.pem"
 	siteConfFile   = "site.conf"
-	siteOcspFile   = "ocsp.pem" // TODO del
 	siteIndexFile  = "index.html"
 
 	rsaPrivateKey = "RSA PRIVATE KEY"
@@ -42,8 +42,9 @@ func init() {
 	}
 
 	if directoryURL == "" {
-		directoryURL = "https://acme-staging.api.letsencrypt.org/directory"
 		directoryURL = "https://acme-v01.api.letsencrypt.org/directory"
+		directoryURL = "https://acme-staging.api.letsencrypt.org/directory"
+		log.Println(directoryURL)
 	}
 
 	if resourceURL == "" {
