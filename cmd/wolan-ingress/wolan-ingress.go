@@ -22,7 +22,10 @@ func main() {
 	switch action {
 	case "new":
 		ingress.LogInfo(action, domains)
-		ingress.RunNew(domains)
+		err := ingress.RunNew(domains)
+		if err != nil {
+			ingress.LogInfoNum(2)(err.Error())
+		}
 	case "renew":
 		ingress.LogInfo(action, domains)
 		ingress.RunRenew(domains)

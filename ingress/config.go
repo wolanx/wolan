@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"golang.org/x/crypto/acme"
-	"log"
 )
 
 const (
@@ -44,7 +43,6 @@ func init() {
 	if directoryURL == "" {
 		directoryURL = "https://acme-v01.api.letsencrypt.org/directory"
 		directoryURL = "https://acme-staging.api.letsencrypt.org/directory"
-		log.Println(directoryURL)
 	}
 
 	if resourceURL == "" {

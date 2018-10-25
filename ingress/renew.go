@@ -16,6 +16,8 @@ import (
 )
 
 func RunRenew(args []string) {
+	LogInfo(directoryURL)
+
 	var client *acme.Client
 	certExpiry := 365 * 24 * time.Hour
 

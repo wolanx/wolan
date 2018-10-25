@@ -12,17 +12,18 @@ import (
 	"path/filepath"
 	"reflect"
 	"time"
-
+	"fmt"
 	"net"
 
 	"golang.org/x/crypto/acme"
-	"log"
-	"fmt"
+	"errors"
 )
 
-func RunNew(args []string) {
+func RunNew(args []string) error {
+	LogInfo(directoryURL)
+
 	if len(args) == 0 {
-		Fatalf("no domain specified")
+		return errors.New("args = 0")
 	}
 
 	if err := MkdirAll(configDir, 0700); err != nil {
@@ -70,7 +71,7 @@ func RunNew(args []string) {
 		domainIndexPath := filepath.Join(domainPublicDir, siteIndexFile)
 
 		if err := MkdirAll(domainRootDir, 0755); err != nil {
-			Fatalf("%s root: %v", domain, err)
+			Fatalf("%s root: %v", domainConfPath, err)
 		}
 
 		data := struct {
@@ -85,7 +86,7 @@ func RunNew(args []string) {
 
 		if err := writeTpl(confTpl, domainConfPath, data); err != nil {
 			if os.IsExist(err) {
-				LogWarn(fmt.Sprintf("%s conf: %v", domain, err))
+				LogWarn(fmt.Sprintf("%s conf: %v", domainConfPath, err))
 				continue
 			} else {
 				Fatalf("%s conf: %v", domain, err)
@@ -106,7 +107,6 @@ func RunNew(args []string) {
 	var client *acme.Client
 
 	if len(domains) > 0 {
-
 		if err := NginxReload(); err != nil {
 			Fatalf("nginx: %v", err)
 		}
@@ -134,13 +134,9 @@ func RunNew(args []string) {
 	certExpiry := 365 * 24 * time.Hour
 
 	for _, domain := range domains {
-		log.Println(domain)
+		LogInfo(domain)
 		ipArr, err := net.LookupIP(domain)
-		log.Println(ipArr)
-
-		// TODO del mock
-		//err = nil
-		//ipArr = []net.IP{[]byte("101.132.77.68")}
+		LogInfo(ipArr)
 
 		if err != nil {
 			Fatalf("%s lookup: %v", domain, err)
@@ -193,14 +189,12 @@ func RunNew(args []string) {
 		wwwDomain := "www." + domain
 
 		if wwwIPArr, err := net.LookupIP(wwwDomain); err == nil {
-
 			if reflect.DeepEqual(ipArr, wwwIPArr) {
 				dnsNames = append(dnsNames, wwwDomain)
 			}
 		}
 
 		for _, cert := range conf.Certificates {
-
 			if err := sameDir(cert.privkey, 0700); err != nil {
 				Fatalf("dir: %v", err)
 			}
@@ -252,4 +246,5 @@ func RunNew(args []string) {
 			Fatalf("nginx: %v", err)
 		}
 	}
+	return nil
 }
