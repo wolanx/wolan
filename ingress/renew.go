@@ -1,4 +1,4 @@
-package main
+package ingress
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"golang.org/x/crypto/acme"
 )
 
-func runRenew(args []string) {
+func RunRenew(args []string) {
 	var client *acme.Client
 	certExpiry := 365 * 24 * time.Hour
 

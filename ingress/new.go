@@ -1,4 +1,4 @@
-package main
+package ingress
 
 import (
 	"context"
@@ -19,7 +19,7 @@ import (
 	"log"
 )
 
-func runNew(args []string) {
+func RunNew(args []string) {
 	if len(args) == 0 {
 		Fatalf("no domain specified")
 	}

@@ -1,14 +1,15 @@
-package main
+package ingress
 
 import (
 	"os"
 	"path/filepath"
-	"log"
 	"html/template"
 	"os/exec"
 	"fmt"
 	"flag"
 	"sync"
+	"log"
+	"runtime"
 )
 
 var (
@@ -65,7 +66,7 @@ func editTpl(tpl *template.Template, fp string, data interface{}) error {
 	return tpl.Execute(fn, data)
 }
 
-func usageAndExit(msg string) {
+func UsageAndExit(msg string) {
 	if msg != "" {
 		fmt.Fprintf(os.Stderr, msg)
 		fmt.Fprintf(os.Stderr, "\n\n")
@@ -75,7 +76,13 @@ func usageAndExit(msg string) {
 	os.Exit(1)
 }
 
-var logf = log.Printf
+func logf(format string, args ...interface{}) {
+	_, file, line, tf := runtime.Caller(1)
+	if tf {
+		log.Printf("%s:%d", file, line)
+	}
+	log.Printf(format, args...)
+}
 
 func Errorf(format string, args ...interface{}) {
 	logf(format, args...)
