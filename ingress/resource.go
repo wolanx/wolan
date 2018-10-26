@@ -13,19 +13,15 @@ func fetchResource(filename string) ([]byte, error) {
 	}
 
 	dir := filepath.Join(configDir, "rc")
-
 	if err := MkdirAll(dir, 0700); err != nil {
 		return nil, err
 	}
 
 	fp := filepath.Join(dir, filename)
-
 	if _, err := os.Stat(fp); os.IsNotExist(err) {
-
 		file, _ := os.Open(resourceURL + filename)
 
 		bytes, err := ioutil.ReadAll(file)
-
 		if err != nil {
 			return nil, err
 		}
@@ -38,7 +34,6 @@ func fetchResource(filename string) ([]byte, error) {
 	}
 
 	bytes, err := ioutil.ReadFile(fp)
-
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +52,6 @@ func writeResource(filename string) error {
 		}
 
 		bytes, err := fetchResource(filepath.Base(filename))
-
 		if err != nil {
 			return err
 		}

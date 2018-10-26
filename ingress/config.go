@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
-
 	"golang.org/x/crypto/acme"
 )
 
@@ -30,46 +28,15 @@ var (
 )
 
 func init() {
-	configDir = os.Getenv("NGX_CONFIG")
-	directoryURL = os.Getenv("NGX_DIRECTORY_URL")
-	resourceURL = os.Getenv("NGX_RESOURCE")
-	siteConfDir = os.Getenv("NGX_SITE_CONFIG")
-	siteRootDir = os.Getenv("NGX_SITE_ROOT")
+	configDir = "/root/ngxpkg"
+	resourceURL = "/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
+	siteConfDir = "/etc/nginx/conf.d"
+	siteRootDir = "/usr/share/nginx/html"
 
-	if configDir == "" {
-		configDir = "/root/ngxpkg"
-	}
+	//directoryURL = "https://acme-v01.api.letsencrypt.org/directory"
+	directoryURL = "https://acme-staging.api.letsencrypt.org/directory"
 
-	if directoryURL == "" {
-		directoryURL = "https://acme-v01.api.letsencrypt.org/directory"
-		directoryURL = "https://acme-staging.api.letsencrypt.org/directory"
-	}
-
-	if resourceURL == "" {
-		resourceURL = "/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
-	}
-
-	if siteConfDir == "" {
-		siteConfDir = "/etc/nginx/conf.d"
-	}
-
-	if siteRootDir == "" {
-		siteRootDir = "/usr/share/nginx/html"
-	}
-
-	allowRenewDays, err := strconv.Atoi(os.Getenv("NGX_ALLOW_RENEW_DAYS"))
-
-	if err != nil {
-		allowRenewDays = 30
-	}
-
-	if allowRenewDays < 7 {
-		allowRenewDays = 7
-	}
-
-	if allowRenewDays > 30 {
-		allowRenewDays = 30
-	}
+	allowRenewDays = 30
 }
 
 type userConfig struct {

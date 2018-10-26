@@ -29,35 +29,29 @@ func RunNew(args []string) error {
 	if err := MkdirAll(configDir, 0700); err != nil {
 		Fatalf("config dir: %v", err)
 	}
-
 	if err := MkdirAll(siteConfDir, 0700); err != nil {
 		Fatalf("site conf dir: %v", err)
 	}
-
 	if err := MkdirAll(siteRootDir, 0755); err != nil {
 		Fatalf("site root dir: %v", err)
 	}
 
 	conf, err := fetchResource(siteConfFile)
-
 	if err != nil {
 		Fatalf("read conf: %v", err)
 	}
 
 	index, err := fetchResource(siteIndexFile)
-
 	if err != nil {
 		Fatalf("read index: %v", err)
 	}
 
 	confTpl, err := template.New("siteConf").Parse(string(conf))
-
 	if err != nil {
 		Fatalf("parse conf: %v", err)
 	}
 
 	indexTpl, err := template.New("siteIndex").Parse(string(index))
-
 	if err != nil {
 		Fatalf("parse index: %v", err)
 	}
