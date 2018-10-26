@@ -19,16 +19,14 @@ import (
 )
 
 func RunNew(args []string) error {
-	LogoNum(0).Info(AcmeURL)
+	LogoNum(0).Warn(AcmeURL)
 
 	if len(args) == 0 {
 		return errors.New("args = 0")
 	}
 
 	prepareDir()
-
 	confTpl, indexTpl := LoadTpl()
-
 	domains := arg2dm(args, confTpl, indexTpl)
 
 	var client *acme.Client
@@ -59,13 +57,8 @@ func RunNew(args []string) error {
 	certExpiry := 365 * 24 * time.Hour
 
 	for _, domain := range domains {
-		LogoNum(0).Info(domain)
 		ipArr, err := net.LookupIP(domain)
-		LogoNum(0).Info(ipArr)
-
-		if err != nil {
-			Fatalf("%s lookup: %v", domain, err)
-		}
+		LogoNum(0).Warn(domain, " ", ipArr)
 
 		domainConfPath := filepath.Join(siteConfDir, domain+".conf")
 		domainRootDir := filepath.Join(siteRootDir, domain)
