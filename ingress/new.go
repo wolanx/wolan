@@ -18,6 +18,82 @@ import (
 	"errors"
 )
 
+func LoadTpl() (*template.Template, *template.Template) {
+	conf, err := fetchResource(siteConfFile)
+	if err != nil {
+		Fatalf("read conf: %v", err)
+	}
+	index, err := fetchResource(siteIndexFile)
+	if err != nil {
+		Fatalf("read index: %v", err)
+	}
+	confTpl, err := template.New("siteConf").Parse(string(conf))
+	if err != nil {
+		Fatalf("parse conf: %v", err)
+	}
+	indexTpl, err := template.New("siteIndex").Parse(string(index))
+	if err != nil {
+		Fatalf("parse index: %v", err)
+	}
+	return confTpl, indexTpl
+}
+
+func arg2dm(args []string, confTpl *template.Template, indexTpl *template.Template) []string {
+	var domains []string
+	for _, domain := range args {
+		domainConfPath := filepath.Join(confDir, domain+".conf")
+		domainRootDir := filepath.Join(wwwDir, domain)
+		domainPublicDir := filepath.Join(domainRootDir, "public")
+		domainIndexPath := filepath.Join(domainPublicDir, siteIndexFile)
+
+		if err := MkDirAll(domainRootDir, 0755); err != nil {
+			Fatalf("%s root: %v", domainConfPath, err)
+		}
+
+		data := struct {
+			SiteRoot string
+			Domain   string
+			WithSSL  bool
+		}{
+			SiteRoot: wwwDir,
+			Domain:   domain,
+			WithSSL:  false,
+		}
+
+		if err := writeTpl(confTpl, domainConfPath, data); err != nil {
+			if os.IsExist(err) {
+				LogoNum(0).Warnf("%s conf: %v", domainConfPath, err)
+				continue
+			} else {
+				Fatalf("%s conf: %v", domain, err)
+			}
+		}
+
+		domains = append(domains, domain)
+
+		if err := MkDirAll(domainPublicDir, 0755); err != nil {
+			Fatalf("%s public: %v", domain, err)
+		}
+
+		if err := writeTpl(indexTpl, domainIndexPath, data); err != nil {
+			LogoNum(0).Infof("%s index: %v", domain, err)
+		}
+	}
+	return domains
+}
+
+func prepareDir() {
+	if err := MkDirAll(configDir, 0700); err != nil {
+		Fatalf("config dir: %v", err)
+	}
+	if err := MkDirAll(confDir, 0700); err != nil {
+		Fatalf("site conf dir: %v", err)
+	}
+	if err := MkDirAll(wwwDir, 0755); err != nil {
+		Fatalf("site root dir: %v", err)
+	}
+}
+
 func RunNew(args []string) error {
 	LogoNum(0).Warn(AcmeURL)
 
@@ -60,8 +136,8 @@ func RunNew(args []string) error {
 		ipArr, err := net.LookupIP(domain)
 		LogoNum(0).Warn(domain, " ", ipArr)
 
-		domainConfPath := filepath.Join(siteConfDir, domain+".conf")
-		domainRootDir := filepath.Join(siteRootDir, domain)
+		domainConfPath := filepath.Join(confDir, domain+".conf")
+		domainRootDir := filepath.Join(wwwDir, domain)
 		domainPublicDir := filepath.Join(domainRootDir, "public")
 
 		data := struct {
@@ -69,7 +145,7 @@ func RunNew(args []string) error {
 			Domain   string
 			WithSSL  bool
 		}{
-			SiteRoot: siteRootDir,
+			SiteRoot: wwwDir,
 			Domain:   domain,
 			WithSSL:  true,
 		}
@@ -90,7 +166,7 @@ func RunNew(args []string) error {
 			LogoNum(0).Warnf("ticket: %v", err)
 		}
 		if err := writeResource(conf.SslTrustedCertificate); err != nil {
-			LogoNum(0).Warnf("%s ocsp: %v", domain, err)
+			LogoNum(0).Warnf("ocsp %s: %v", domain, err)
 		}
 
 		req := &x509.CertificateRequest{
@@ -143,6 +219,7 @@ func RunNew(args []string) error {
 			if err := ioutil.WriteFile(cert.fullchain, fullBody, 0644); err != nil {
 				Fatalf("cert: %v", err)
 			}
+			LogoNum(0).Info("gen ", cert.fullchain)
 		}
 
 		if err := NginxReload(); err != nil {
@@ -150,80 +227,4 @@ func RunNew(args []string) error {
 		}
 	}
 	return nil
-}
-
-func arg2dm(args []string, confTpl *template.Template, indexTpl *template.Template) []string {
-	var domains []string
-	for _, domain := range args {
-		domainConfPath := filepath.Join(siteConfDir, domain+".conf")
-		domainRootDir := filepath.Join(siteRootDir, domain)
-		domainPublicDir := filepath.Join(domainRootDir, "public")
-		domainIndexPath := filepath.Join(domainPublicDir, siteIndexFile)
-
-		if err := MkDirAll(domainRootDir, 0755); err != nil {
-			Fatalf("%s root: %v", domainConfPath, err)
-		}
-
-		data := struct {
-			SiteRoot string
-			Domain   string
-			WithSSL  bool
-		}{
-			SiteRoot: siteRootDir,
-			Domain:   domain,
-			WithSSL:  false,
-		}
-
-		if err := writeTpl(confTpl, domainConfPath, data); err != nil {
-			if os.IsExist(err) {
-				LogoNum(0).Warnf("%s conf: %v", domainConfPath, err)
-				continue
-			} else {
-				Fatalf("%s conf: %v", domain, err)
-			}
-		}
-
-		domains = append(domains, domain)
-
-		if err := MkDirAll(domainPublicDir, 0755); err != nil {
-			Fatalf("%s public: %v", domain, err)
-		}
-
-		if err := writeTpl(indexTpl, domainIndexPath, data); err != nil {
-			LogoNum(0).Infof("%s index: %v", domain, err)
-		}
-	}
-	return domains
-}
-
-func prepareDir() {
-	if err := MkDirAll(configDir, 0700); err != nil {
-		Fatalf("config dir: %v", err)
-	}
-	if err := MkDirAll(siteConfDir, 0700); err != nil {
-		Fatalf("site conf dir: %v", err)
-	}
-	if err := MkDirAll(siteRootDir, 0755); err != nil {
-		Fatalf("site root dir: %v", err)
-	}
-}
-
-func LoadTpl() (*template.Template, *template.Template) {
-	conf, err := fetchResource(siteConfFile)
-	if err != nil {
-		Fatalf("read conf: %v", err)
-	}
-	index, err := fetchResource(siteIndexFile)
-	if err != nil {
-		Fatalf("read index: %v", err)
-	}
-	confTpl, err := template.New("siteConf").Parse(string(conf))
-	if err != nil {
-		Fatalf("parse conf: %v", err)
-	}
-	indexTpl, err := template.New("siteIndex").Parse(string(index))
-	if err != nil {
-		Fatalf("parse index: %v", err)
-	}
-	return confTpl, indexTpl
 }

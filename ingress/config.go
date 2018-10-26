@@ -19,22 +19,14 @@ const (
 )
 
 var (
-	configDir      string
-	AcmeURL        string
-	allowRenewDays int
-	resourceURL    string
-	siteConfDir    string
-	siteRootDir    string
-)
-
-func init() {
-	configDir = "/root/ngxpkg"
-	resourceURL = "/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
-	siteConfDir = "/etc/nginx/conf.d"
-	siteRootDir = "/usr/share/nginx/html"
-
 	allowRenewDays = 30
-}
+	AcmeURL        string
+	configDir      = "/root/ngxpkg"
+	tplDir         = "/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
+	confDir        = "/etc/nginx/conf.d"
+	sslDir         = "/etc/nginx/ssl"
+	wwwDir         = "/usr/share/nginx/html"
+)
 
 type userConfig struct {
 	acme.Account

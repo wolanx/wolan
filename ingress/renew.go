@@ -22,7 +22,7 @@ func RunRenew(args []string) {
 	certExpiry := 365 * 24 * time.Hour
 
 	for _, domain := range args {
-		domainConfPath := filepath.Join(siteConfDir, domain+".conf")
+		domainConfPath := filepath.Join(confDir, domain+".conf")
 
 		if _, err := os.Stat(domainConfPath); os.IsNotExist(err) {
 			LogoNum(0).Infof("%s conf: %v", domain, err)

@@ -19,7 +19,7 @@ func fetchResource(filename string) ([]byte, error) {
 
 	fp := filepath.Join(dir, filename)
 	if _, err := os.Stat(fp); os.IsNotExist(err) {
-		file, _ := os.Open(resourceURL + filename)
+		file, _ := os.Open(tplDir + filename)
 
 		bytes, err := ioutil.ReadAll(file)
 		if err != nil {
