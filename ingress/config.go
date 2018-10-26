@@ -20,7 +20,7 @@ const (
 
 var (
 	configDir      string
-	directoryURL   string
+	AcmeURL        string
 	allowRenewDays int
 	resourceURL    string
 	siteConfDir    string
@@ -32,9 +32,6 @@ func init() {
 	resourceURL = "/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
 	siteConfDir = "/etc/nginx/conf.d"
 	siteRootDir = "/usr/share/nginx/html"
-
-	//directoryURL = "https://acme-v01.api.letsencrypt.org/directory"
-	directoryURL = "https://acme-staging.api.letsencrypt.org/directory"
 
 	allowRenewDays = 30
 }

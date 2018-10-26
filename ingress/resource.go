@@ -13,7 +13,7 @@ func fetchResource(filename string) ([]byte, error) {
 	}
 
 	dir := filepath.Join(configDir, "rc")
-	if err := MkdirAll(dir, 0700); err != nil {
+	if err := MkDirAll(dir, 0700); err != nil {
 		return nil, err
 	}
 

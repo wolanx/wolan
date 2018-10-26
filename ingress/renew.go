@@ -16,7 +16,7 @@ import (
 )
 
 func RunRenew(args []string) {
-	LogInfo(directoryURL)
+	LogoNum(0).Info(AcmeURL)
 
 	var client *acme.Client
 	certExpiry := 365 * 24 * time.Hour
@@ -25,7 +25,7 @@ func RunRenew(args []string) {
 		domainConfPath := filepath.Join(siteConfDir, domain+".conf")
 
 		if _, err := os.Stat(domainConfPath); os.IsNotExist(err) {
-			LogInfof("%s conf: %v", domain, err)
+			LogoNum(0).Infof("%s conf: %v", domain, err)
 			continue
 		}
 
@@ -44,14 +44,14 @@ func RunRenew(args []string) {
 			}
 
 			if !strings.Contains(c.Issuer.CommonName, "Let's Encrypt") {
-				LogInfof("%s Issuer '%s' not support acme, skip.", filepath.Base(cert.fullchain), c.Issuer.CommonName)
+				LogoNum(0).Infof("%s Issuer '%s' not support acme, skip.", filepath.Base(cert.fullchain), c.Issuer.CommonName)
 				continue
 			}
 
 			days := int(c.NotAfter.Sub(time.Now()).Hours() / 24)
 
 			if days > allowRenewDays {
-				LogInfof("%s %d days valid, skip.", filepath.Base(cert.fullchain), days)
+				LogoNum(0).Infof("%s %d days valid, skip.", filepath.Base(cert.fullchain), days)
 				continue
 			}
 
@@ -65,7 +65,7 @@ func RunRenew(args []string) {
 
 				client = &acme.Client{
 					Key:          accountKey,
-					DirectoryURL: directoryURL,
+					DirectoryURL: AcmeURL,
 				}
 
 				if _, err := readConfig(); os.IsNotExist(err) {

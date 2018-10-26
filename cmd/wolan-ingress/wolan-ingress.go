@@ -6,28 +6,36 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// docker cp ./cmd/wolan-ingress/wolan-ingress wolan-ingress:/usr/bin/wolan-ingress
-// docker cp ./tpl/ingress/rc wolan-ingress:/go/src/github.com/zx5435/wolan/tpl/ingress/rc
 func main() {
 	log.SetFormatter(&log.TextFormatter{})
 
-	var action string
-	var domains Domains
+	var (
+		env     string
+		action  string
+		domains Domains
+	)
 
+	flag.StringVar(&env, "env", "dev", "env")
 	flag.StringVar(&action, "s", "", "new|renew")
 	flag.Var(&domains, "d", "www.example.com")
 
 	flag.Parse()
 
+	if env != "prod" {
+		ingress.AcmeURL = "https://acme-staging.api.letsencrypt.org/directory"
+	} else {
+		ingress.AcmeURL = "https://acme-v01.api.letsencrypt.org/directory"
+	}
+
 	switch action {
 	case "new":
-		ingress.LogInfo(action, domains)
+		ingress.LogoNum(0).Info(action, domains)
 		err := ingress.RunNew(domains)
 		if err != nil {
-			ingress.LogInfoNum(2)(err.Error())
+			ingress.LogoNum(0).Info(err.Error())
 		}
 	case "renew":
-		ingress.LogInfo(action, domains)
+		ingress.LogoNum(0).Info(action, domains)
 		ingress.RunRenew(domains)
 	default:
 		ingress.UsageAndExit("-s cannot be new|renew.")

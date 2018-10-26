@@ -44,7 +44,6 @@ func register(client *acme.Client) error {
 
 func authz(ctx context.Context, client *acme.Client, domainPublic string, domain string) error {
 	z, err := client.Authorize(ctx, domain)
-
 	if err != nil {
 		return err
 	}
@@ -67,7 +66,6 @@ func authz(ctx context.Context, client *acme.Client, domainPublic string, domain
 	}
 
 	val, err := client.HTTP01ChallengeResponse(chal.Token)
-
 	if err != nil {
 		return err
 	}
@@ -99,13 +97,11 @@ func authz(ctx context.Context, client *acme.Client, domainPublic string, domain
 
 func readKey(path string) (crypto.Signer, error) {
 	bytes, err := ioutil.ReadFile(path)
-
 	if err != nil {
 		return nil, err
 	}
 
 	block, _ := pem.Decode(bytes)
-
 	if block == nil {
 		return nil, fmt.Errorf("no block found in %q", path)
 	}
@@ -122,7 +118,6 @@ func readKey(path string) (crypto.Signer, error) {
 
 func writeKey(path string, key crypto.PrivateKey) error {
 	fn, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-
 	if err != nil {
 		return err
 	}
@@ -153,7 +148,6 @@ func writeKey(path string, key crypto.PrivateKey) error {
 
 func anyKey(filename string) (crypto.Signer, error) {
 	key, err := readKey(filename)
-
 	if err == nil {
 		return key, nil
 	}
@@ -194,9 +188,7 @@ func memKey(filename string) (crypto.Signer, error) {
 	}
 
 	if strings.Contains(filename, ".ecdsa") {
-
 		privkey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-
 		if err != nil {
 			return nil, err
 		}
@@ -219,7 +211,6 @@ func prompt(tos string) bool {
 
 func parseCertificate(path string) (*x509.Certificate, error) {
 	bytes, err := ioutil.ReadFile(path)
-
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +218,6 @@ func parseCertificate(path string) (*x509.Certificate, error) {
 	block, _ := pem.Decode(bytes)
 
 	cert, err := x509.ParseCertificate(block.Bytes)
-
 	if err != nil {
 		return nil, err
 	}

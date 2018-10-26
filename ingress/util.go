@@ -19,14 +19,14 @@ var (
 	exitStatus = 0
 )
 
-func MkdirAll(dir string, perm os.FileMode) error {
-	LogInfoNum(2)("mkdir -p ", dir)
+func MkDirAll(dir string, perm os.FileMode) error {
+	LogoNum(1).Info("mkdir -p ", dir)
 	return os.MkdirAll(dir, perm)
 }
 
 func sameDir(filename string, perm os.FileMode) error {
 	dir := filepath.Dir(filename)
-	return MkdirAll(dir, perm)
+	return MkDirAll(dir, perm)
 }
 
 func NginxReload() error {
@@ -38,6 +38,7 @@ func NginxReload() error {
 }
 
 func writeTpl(tpl *template.Template, fp string, data interface{}) error {
+	LogoNum(1).Warn("writeTpl ", fp)
 	if _, err := os.Stat(fp); os.IsNotExist(err) {
 		fn, err := os.OpenFile(fp, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 		if err != nil {
@@ -88,40 +89,12 @@ func CutName(a string) string {
 	return strings.Replace(a, "/go/src/github.com/zx5435/wolan/", "", 1)
 }
 
-func LogInfo(args ...interface{}) {
-	_, file, no, _ := runtime.Caller(1)
-	log.WithFields(log.Fields{
-		"file": CutName(file) + ":" + strconv.Itoa(no),
-	}).Info(args...)
-}
-
-func LogWarn(args ...interface{}) {
-	_, file, no, _ := runtime.Caller(1)
-	log.WithFields(log.Fields{
-		"file": CutName(file) + ":" + strconv.Itoa(no),
-	}).Warn(args...)
-}
-
-func LogInfoNum(n int) func(args ...interface{}) {
-	_, file, no, _ := runtime.Caller(n)
+// log
+func LogoNum(n int) *log.Entry {
+	_, file, no, _ := runtime.Caller(1 + n)
 	return log.WithFields(log.Fields{
 		"file": CutName(file) + ":" + strconv.Itoa(no),
-	}).Info
-}
-
-func LogInfof(a string, args ...interface{}) {
-	_, file, no, _ := runtime.Caller(1)
-	log.WithFields(log.Fields{
-		"file": CutName(file) + ":" + strconv.Itoa(no),
-	}).Infof(a, args...)
-}
-
-func Errorf(format string, args ...interface{}) {
-	_, file, no, _ := runtime.Caller(1)
-	log.WithFields(log.Fields{
-		"file": CutName(file) + ":" + strconv.Itoa(no),
-	}).Errorf(format, args...)
-	SetExitStatus(1)
+	})
 }
 
 func Fatalf(format string, args ...interface{}) {
