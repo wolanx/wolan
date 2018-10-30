@@ -174,6 +174,7 @@ func RunNew(args []string) error {
 		}
 
 		dnsNames := []string{domain}
+		//dnsNames := []string{domain, "www.zx5435.com", "x.test.zx5435.com"}
 
 		for _, cert := range conf.Certificates {
 			if err := sameDir(cert.privkey, 0700); err != nil {
@@ -205,7 +206,6 @@ func RunNew(args []string) error {
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 			defer cancel()
 			certs, _, err := client.CreateCert(ctx, csr, certExpiry, true)
-
 			if err != nil {
 				Fatalf("cert: %v", err)
 			}
