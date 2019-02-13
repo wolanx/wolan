@@ -27,16 +27,14 @@ ingress-pkg:
 	docker build -f __cicd__/Dockerfile.ingress -t zx5435/wolan:ingress .
 
 ingress-test:
-	docker run -it -d --name wolan-ingress -p2323:80 zx5435/wolan:ingress
+	docker run -it -d --name wolan-ingress -p80:80 -p443:443 zx5435/wolan:ingress
 
 restart: down up
 
 up:
+	docker stop wolan
+	docker rm wolan
 	cd __work__ && docker run -it -d --name wolan -p 4321:23456 \
 	    -v "$$PWD":/app/__work__ \
 	    -v "/var/run/docker.sock:/var/run/docker.sock" \
 	    zx5435/wolan
-
-down:
-	docker stop wolan
-	docker rm wolan

@@ -3,12 +3,14 @@ package main
 import (
 	"flag"
 	"github.com/zx5435/wolan/ingress"
-	log "github.com/sirupsen/logrus"
+	"log"
 )
 
-func main() {
-	log.SetFormatter(&log.TextFormatter{})
+func init() {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
+}
 
+func main() {
 	var (
 		env     string
 		action  string
@@ -27,15 +29,15 @@ func main() {
 		ingress.AcmeURL = "https://acme-v01.api.letsencrypt.org/directory"
 	}
 
+	log.Printf("action: %s, domains: %s\n", action, domains)
+
 	switch action {
 	case "new":
-		ingress.LogoNum(0).Info(action, domains)
 		err := ingress.RunNew(domains)
 		if err != nil {
 			ingress.LogoNum(0).Info(err.Error())
 		}
 	case "renew":
-		ingress.LogoNum(0).Info(action, domains)
 		ingress.RunRenew(domains)
 	default:
 		ingress.UsageAndExit("-s cannot be new|renew.")
