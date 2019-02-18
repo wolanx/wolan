@@ -25,13 +25,15 @@ func main() {
 		ingress.AcmeURL = "https://acme-v01.api.letsencrypt.org/directory"
 	}
 
+	action = "new"
+
 	log.Infof("action: %s, domains: %s", action, domains)
 
 	switch action {
 	case "new":
 		err := ingress.RunNew(domains)
 		if err != nil {
-			ingress.LogoNum(0).Info(err.Error())
+			log.Info(err.Error())
 		}
 	case "renew":
 		ingress.RunRenew(domains)

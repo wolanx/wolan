@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 	"runtime"
+	"os"
 )
 
 // RFC5424 log message levels.
@@ -42,7 +43,10 @@ func newBrush(color int, t string) brush {
 
 		LastQueryTime := time.Now().Add(time.Hour * -24)
 		lastTs := LastQueryTime.Format("2006-01-02 15:04:05")
-		return fmt.Sprintf("%s %s:%d %s%d%s[%s]%s ", lastTs, file, line, pre, color, "m", t, end) + text
+		if false {
+			fmt.Println(lastTs)
+		}
+		return fmt.Sprintf("%20s:%-3d %s%d%s%-6s%s ", file, line, pre, color, "m", t, end) + text
 	}
 }
 
@@ -50,7 +54,7 @@ var colors = []brush{
 	newBrush(37, "Emergency"), // Emergency          white
 	newBrush(36, "Alert"),     // Alert              cyan
 	newBrush(35, "Critical"),  // Critical           magenta
-	newBrush(31, "Err"),       // Error              red
+	newBrush(31, "Error"),     // Error              red
 	newBrush(33, "Warn"),      // Warning            yellow
 	newBrush(32, "Notice"),    // Notice             green
 	newBrush(34, "Info"),      // Informational      blue
@@ -58,6 +62,16 @@ var colors = []brush{
 }
 
 // any
+
+func Debug(v ...interface{}) {
+	str := fmt.Sprint(v...)
+	fmt.Println(colors[LevelNotice](str))
+}
+
+func Debugf(format string, v ...interface{}) {
+	str := fmt.Sprintf(format, v...)
+	fmt.Println(colors[LevelNotice](str))
+}
 
 func Info(v ...interface{}) {
 	str := fmt.Sprint(v...)
@@ -87,4 +101,15 @@ func Error(v ...interface{}) {
 func Errorf(format string, v ...interface{}) {
 	str := fmt.Sprintf(format, v...)
 	fmt.Println(colors[LevelError](str))
+}
+
+func Fatal(v ...interface{}) {
+	str := fmt.Sprint(v...)
+	fmt.Println(colors[LevelCritical](str))
+}
+
+func Fatalf(format string, v ...interface{}) {
+	str := fmt.Sprintf(format, v...)
+	fmt.Println(colors[LevelCritical](str))
+	os.Exit(1)
 }

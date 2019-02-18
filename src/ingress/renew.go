@@ -13,10 +13,11 @@ import (
 	"time"
 
 	"golang.org/x/crypto/acme"
+	"github.com/zx5435/wolan/src/log"
 )
 
 func RunRenew(args []string) {
-	LogoNum(0).Info(AcmeURL)
+	log.Info(AcmeURL)
 
 	var client *acme.Client
 	certExpiry := 365 * 24 * time.Hour
@@ -25,14 +26,14 @@ func RunRenew(args []string) {
 		domainConfPath := filepath.Join(confDir, domain+".conf")
 
 		if _, err := os.Stat(domainConfPath); os.IsNotExist(err) {
-			LogoNum(0).Infof("%s conf: %v", domain, err)
+			log.Infof("%s conf: %v", domain, err)
 			continue
 		}
 
 		conf, err := parseSiteConf(domainConfPath)
 
 		if err != nil {
-			Fatalf("%s conf: %v", domain, err)
+			log.Fatalf("%s conf: %v", domain, err)
 		}
 
 		for _, cert := range conf.Certificates {
@@ -40,18 +41,18 @@ func RunRenew(args []string) {
 			c, err := parseCertificate(cert.fullchain)
 
 			if err != nil {
-				Fatalf("%s cert: %v", domain, err)
+				log.Fatalf("%s cert: %v", domain, err)
 			}
 
 			if !strings.Contains(c.Issuer.CommonName, "Let's Encrypt") {
-				LogoNum(0).Infof("%s Issuer '%s' not support acme, skip.", filepath.Base(cert.fullchain), c.Issuer.CommonName)
+				log.Infof("%s Issuer '%s' not support acme, skip.", filepath.Base(cert.fullchain), c.Issuer.CommonName)
 				continue
 			}
 
 			days := int(c.NotAfter.Sub(time.Now()).Hours() / 24)
 
 			if days > allowRenewDays {
-				LogoNum(0).Infof("%s %d days valid, skip.", filepath.Base(cert.fullchain), days)
+				log.Infof("%s %d days valid, skip.", filepath.Base(cert.fullchain), days)
 				continue
 			}
 
@@ -60,7 +61,7 @@ func RunRenew(args []string) {
 				accountKey, err := anyKey(filepath.Join(configDir, accountKeyFile))
 
 				if err != nil {
-					Fatalf("account key: %v", err)
+					log.Fatalf("account key: %v", err)
 				}
 
 				client = &acme.Client{
@@ -70,7 +71,7 @@ func RunRenew(args []string) {
 
 				if _, err := readConfig(); os.IsNotExist(err) {
 					if err := register(client); err != nil {
-						Fatalf("register: %v", err)
+						log.Fatalf("register: %v", err)
 					}
 				}
 			}
@@ -83,20 +84,20 @@ func RunRenew(args []string) {
 			privkey, err := memKey(cert.privkey)
 
 			if err != nil {
-				Fatalf("privkey: %v", err)
+				log.Fatalf("privkey: %v", err)
 			}
 
 			csr, err := x509.CreateCertificateRequest(rand.Reader, req, privkey)
 
 			if err != nil {
-				Fatalf("csr: %v", err)
+				log.Fatalf("csr: %v", err)
 			}
 
 			for _, dnsName := range c.DNSNames {
 				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 
 				if err := authz(ctx, client, conf.DomainPublicDir, dnsName); err != nil {
-					Fatalf("authz %s: %v", dnsName, err)
+					log.Fatalf("authz %s: %v", dnsName, err)
 				}
 				cancel()
 			}
@@ -106,7 +107,7 @@ func RunRenew(args []string) {
 			certs, _, err := client.CreateCert(ctx, csr, certExpiry, true)
 
 			if err != nil {
-				Fatalf("cert: %v", err)
+				log.Fatalf("cert: %v", err)
 			}
 
 			var pemcert []byte
@@ -116,18 +117,18 @@ func RunRenew(args []string) {
 			}
 
 			if err := writeKey(cert.privkey, privkey); err != nil {
-				Fatalf("privkey: %v", err)
+				log.Fatalf("privkey: %v", err)
 			}
 
 			if err := ioutil.WriteFile(cert.fullchain, pemcert, 0644); err != nil {
-				Fatalf("cert: %v", err)
+				log.Fatalf("cert: %v", err)
 			}
 		}
 	}
 
 	if client != nil {
 		if err := NginxReload(); err != nil {
-			Fatalf("nginx: %v", err)
+			log.Fatalf("nginx: %v", err)
 		}
 	}
 }

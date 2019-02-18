@@ -6,20 +6,11 @@ import (
 	"html/template"
 	"os/exec"
 	"flag"
-	"runtime"
-	log2 "github.com/sirupsen/logrus"
-	"strconv"
-	"strings"
 	"github.com/zx5435/wolan/src/log"
 	"fmt"
 )
 
-var (
-	exitStatus = 0
-)
-
 func MkDirAll(dir string, perm os.FileMode) error {
-	//LogoNum(1).Info("mkdir -p ", dir)
 	return os.MkdirAll(dir, perm)
 }
 
@@ -37,7 +28,7 @@ func NginxReload() error {
 }
 
 func writeTpl(tpl *template.Template, fp string, data interface{}) error {
-	LogoNum(1).Info("WriteTpl ", fp)
+	log.Debug("WriteTpl ", fp)
 	if _, err := os.Stat(fp); os.IsNotExist(err) {
 		fn, err := os.OpenFile(fp, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 		if err != nil {
@@ -68,29 +59,8 @@ func UsageAndExit(msg string) {
 	}
 	fmt.Println()
 	flag.Usage()
+	fmt.Println(`Demo:
+  wolan-ingress -s new -d www.test.com
+  wolan-ingress -env=prod -s=new -d zx5435.com`)
 	os.Exit(1)
-}
-
-func Exit() {
-	os.Exit(exitStatus)
-}
-
-func CutName(a string) string {
-	return strings.Replace(a, "/go/src/github.com/zx5435/wolan/", "", 1)
-}
-
-// log2
-func LogoNum(n int) *log2.Entry {
-	_, file, no, _ := runtime.Caller(1 + n)
-	return log2.WithFields(log2.Fields{
-		"file": CutName(file) + ":" + strconv.Itoa(no),
-	})
-}
-
-func Fatalf(format string, args ...interface{}) {
-	_, file, no, _ := runtime.Caller(1)
-	log2.WithFields(log2.Fields{
-		"file": CutName(file) + ":" + strconv.Itoa(no),
-	}).Errorf(format, args...)
-	Exit()
 }
