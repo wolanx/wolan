@@ -117,7 +117,7 @@ func QuickPortMap(portStrs []string) (nat.PortSet, nat.PortMap) {
 			panic(errors.New("port arr : !<=3"))
 		}
 
-		//log.Printf("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
+		//log.Infof("hostIP=%s, hostPort=%s, targetPort=%s\n", hostIP, hostPort, targetPort)
 
 		ports := []nat.PortBinding{
 			{

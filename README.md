@@ -24,3 +24,5 @@ open http://localhost:4321
 - [ ] cd
 - [ ] gateway
 - [ ] auto ssl
+
+http://0.0.0.0:4321/api/ingress/start

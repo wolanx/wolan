@@ -5,17 +5,16 @@ import (
 	"path/filepath"
 	"html/template"
 	"os/exec"
-	"fmt"
 	"flag"
-	"sync"
 	"runtime"
-	log "github.com/sirupsen/logrus"
+	log2 "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
+	"github.com/zx5435/wolan/src/log"
+	"fmt"
 )
 
 var (
-	exitMu     sync.Mutex
 	exitStatus = 0
 )
 
@@ -65,20 +64,11 @@ func editTpl(tpl *template.Template, fp string, data interface{}) error {
 
 func UsageAndExit(msg string) {
 	if msg != "" {
-		fmt.Fprintf(os.Stderr, msg)
-		fmt.Fprintf(os.Stderr, "\n\n")
+		log.Error(msg)
 	}
+	fmt.Println()
 	flag.Usage()
-	fmt.Fprintf(os.Stderr, "\n")
 	os.Exit(1)
-}
-
-func SetExitStatus(n int) {
-	exitMu.Lock()
-	if exitStatus < n {
-		exitStatus = n
-	}
-	exitMu.Unlock()
 }
 
 func Exit() {
@@ -89,17 +79,17 @@ func CutName(a string) string {
 	return strings.Replace(a, "/go/src/github.com/zx5435/wolan/", "", 1)
 }
 
-// log
-func LogoNum(n int) *log.Entry {
+// log2
+func LogoNum(n int) *log2.Entry {
 	_, file, no, _ := runtime.Caller(1 + n)
-	return log.WithFields(log.Fields{
+	return log2.WithFields(log2.Fields{
 		"file": CutName(file) + ":" + strconv.Itoa(no),
 	})
 }
 
 func Fatalf(format string, args ...interface{}) {
 	_, file, no, _ := runtime.Caller(1)
-	log.WithFields(log.Fields{
+	log2.WithFields(log2.Fields{
 		"file": CutName(file) + ":" + strconv.Itoa(no),
 	}).Errorf(format, args...)
 	Exit()

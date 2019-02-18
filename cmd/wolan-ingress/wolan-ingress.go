@@ -2,13 +2,9 @@ package main
 
 import (
 	"flag"
-	"github.com/zx5435/wolan/ingress"
-	"log"
+	"github.com/zx5435/wolan/src/ingress"
+	"github.com/zx5435/wolan/src/log"
 )
-
-func init() {
-	log.SetFlags(log.Lshortfile | log.LstdFlags)
-}
 
 func main() {
 	var (
@@ -17,8 +13,8 @@ func main() {
 		domains Domains
 	)
 
-	flag.StringVar(&env, "env", "dev", "env")
-	flag.StringVar(&action, "s", "", "new|renew")
+	flag.StringVar(&env, "env", "dev", "[dev|prod]")
+	flag.StringVar(&action, "s", "", "[new|renew]")
 	flag.Var(&domains, "d", "www.example.com")
 
 	flag.Parse()
@@ -29,7 +25,7 @@ func main() {
 		ingress.AcmeURL = "https://acme-v01.api.letsencrypt.org/directory"
 	}
 
-	log.Printf("action: %s, domains: %s\n", action, domains)
+	log.Infof("action: %s, domains: %s", action, domains)
 
 	switch action {
 	case "new":

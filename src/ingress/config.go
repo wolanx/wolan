@@ -24,7 +24,6 @@ var (
 	configDir      = "/root/ngxpkg"
 	tplDir         = "/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
 	confDir        = "/etc/nginx/conf.d"
-	sslDir         = "/etc/nginx/ssl"
 	wwwDir         = "/usr/share/nginx/html"
 )
 
