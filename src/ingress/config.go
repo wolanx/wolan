@@ -11,20 +11,23 @@ import (
 const (
 	accountFile    = "account.json"
 	accountKeyFile = "account.ecdsa.pem"
-	siteConfFile   = "site.conf"
-	siteIndexFile  = "index.html"
 
 	rsaPrivateKey = "RSA PRIVATE KEY"
 	ecPrivateKey  = "EC PRIVATE KEY"
 )
 
 var (
-	allowRenewDays = 30
-	AcmeURL        string
-	configDir      = "/root/ngxpkg"
-	tplDir         = "/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
-	confDir        = "/etc/nginx/conf.d"
-	wwwDir         = "/usr/share/nginx/html"
+	AcmeURL string
+	//confDir = "/etc/nginx/conf.d"
+	//wwwDir  = "/usr/share/nginx/html"
+	//configDir = "/root/ngxpkg"
+	//tplDir = "/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
+
+	// TODO temp
+	confDir   = "/Users/zhaoyujie/Desktop/test/ig/conf.d"
+	wwwDir    = "/Users/zhaoyujie/Desktop/test/ig/html"
+	configDir = "/Users/zhaoyujie/Desktop/test/ig"
+	tplDir    = "/Users/zhaoyujie/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
 )
 
 type userConfig struct {

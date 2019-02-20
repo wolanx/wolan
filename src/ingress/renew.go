@@ -37,7 +37,6 @@ func RunRenew(args []string) {
 		}
 
 		for _, cert := range conf.Certificates {
-
 			c, err := parseCertificate(cert.fullchain)
 
 			if err != nil {
@@ -51,7 +50,7 @@ func RunRenew(args []string) {
 
 			days := int(c.NotAfter.Sub(time.Now()).Hours() / 24)
 
-			if days > allowRenewDays {
+			if days > 30 {
 				log.Infof("%s %d days valid, skip.", filepath.Base(cert.fullchain), days)
 				continue
 			}

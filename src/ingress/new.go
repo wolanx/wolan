@@ -18,97 +18,22 @@ import (
 	"github.com/zx5435/wolan/src/log"
 )
 
-func LoadTpl() (*template.Template, *template.Template) {
-	conf, err := fetchResource(siteConfFile)
-	if err != nil {
-		log.Fatalf("read conf: %v", err)
-	}
-	index, err := fetchResource(siteIndexFile)
-	if err != nil {
-		log.Fatalf("read index: %v", err)
-	}
-	confTpl, err := template.New("siteConf").Parse(string(conf))
-	if err != nil {
-		log.Fatalf("parse conf: %v", err)
-	}
-	indexTpl, err := template.New("siteIndex").Parse(string(index))
-	if err != nil {
-		log.Fatalf("parse index: %v", err)
-	}
-	return confTpl, indexTpl
-}
+func RunNew(domains []string) error {
+	log.Debug(AcmeURL, domains)
 
-func arg2dm(args []string, confTpl *template.Template, indexTpl *template.Template) []string {
-	var domains []string
-	for _, domain := range args {
-		domainConfPath := filepath.Join(confDir, domain+".conf")
-		domainRootDir := filepath.Join(wwwDir, domain)
-		domainPublicDir := filepath.Join(domainRootDir, "public")
-		domainIndexPath := filepath.Join(domainPublicDir, siteIndexFile)
-
-		if err := MkDirAll(domainRootDir, 0755); err != nil {
-			log.Fatalf("%s root: %v", domainConfPath, err)
-		}
-
-		data := struct {
-			SiteRoot string
-			Domain   string
-			WithSSL  bool
-		}{
-			SiteRoot: wwwDir,
-			Domain:   domain,
-			WithSSL:  false,
-		}
-
-		if err := writeTpl(confTpl, domainConfPath, data); err != nil {
-			if os.IsExist(err) {
-				log.Warnf("%s conf: %v", domainConfPath, err)
-				continue
-			} else {
-				log.Fatalf("%s conf: %v", domain, err)
-			}
-		}
-
-		domains = append(domains, domain)
-
-		if err := MkDirAll(domainPublicDir, 0755); err != nil {
-			log.Fatalf("%s public: %v", domain, err)
-		}
-
-		if err := writeTpl(indexTpl, domainIndexPath, data); err != nil {
-			log.Infof("%s index: %v", domain, err)
-		}
-	}
-	return domains
-}
-
-func mkDir() {
-	if err := MkDirAll(configDir, 0700); err != nil {
-		log.Fatalf("config dir: %v", err)
-	}
-	if err := MkDirAll(confDir, 0700); err != nil {
-		log.Fatalf("site conf dir: %v", err)
-	}
-	if err := MkDirAll(wwwDir, 0755); err != nil {
-		log.Fatalf("site root dir: %v", err)
-	}
-}
-
-func RunNew(args []string) error {
-	log.Debug(AcmeURL)
-	log.Debug(configDir)
-
-	if len(args) == 0 {
-		return errors.New("args = 0")
+	if len(domains) == 0 {
+		return errors.New("domains = 0")
 	}
 
-	return nil
+	MkDirAll(configDir, 0700)
+	MkDirAll(confDir, 0700)
+	MkDirAll(wwwDir, 0755)
 
-	mkDir()
 	confTpl, indexTpl := LoadTpl()
-	domains := arg2dm(args, confTpl, indexTpl)
+	arg2dm(domains, confTpl, indexTpl)
 
 	var client *acme.Client
+	return nil
 
 	if len(domains) > 0 {
 		if err := NginxReload(); err != nil {
@@ -153,7 +78,7 @@ func RunNew(args []string) error {
 			WithSSL:  true,
 		}
 
-		if err := editTpl(confTpl, domainConfPath, data); err != nil {
+		if err := fileEdit(confTpl, domainConfPath, data); err != nil {
 			log.Fatalf("%s conf: %v", domain, err)
 		}
 
@@ -230,4 +155,51 @@ func RunNew(args []string) error {
 		}
 	}
 	return nil
+}
+
+func LoadTpl() (*template.Template, *template.Template) {
+	confTpl, err := template.New("siteConf").Parse(getFile("site.conf"))
+	if err != nil {
+		log.Fatalf("parse conf: %v", err)
+	}
+	indexTpl, err := template.New("siteIndex").Parse(getFile("index.html"))
+	if err != nil {
+		log.Fatalf("parse index: %v", err)
+	}
+	return confTpl, indexTpl
+}
+
+func arg2dm(dms []string, confTpl *template.Template, indexTpl *template.Template) {
+	for _, dm := range dms {
+		ngConf := filepath.Join(confDir, dm+".conf")
+		dmRoot := filepath.Join(wwwDir, dm)
+		dmCk := filepath.Join(dmRoot, "public")
+		dmCkIdx := filepath.Join(dmCk, "index.html")
+
+		MkDirAll(dmRoot, 0755)
+		MkDirAll(dmCk, 0755)
+
+		data := struct {
+			SiteRoot string
+			Domain   string
+			WithSSL  bool
+		}{
+			SiteRoot: wwwDir,
+			Domain:   dm,
+			WithSSL:  false,
+		}
+
+		if err := fileCreate(confTpl, ngConf, data); err != nil {
+			if os.IsExist(err) {
+				log.Warn(err, ngConf)
+				continue
+			} else {
+				log.Fatal(err, dm)
+			}
+		}
+
+		if err := fileCreate(indexTpl, dmCkIdx, data); err != nil {
+			log.Infof("%s index: %v", dm, err)
+		}
+	}
 }

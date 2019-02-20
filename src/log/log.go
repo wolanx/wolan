@@ -51,9 +51,9 @@ func newBrush(color int, t string) brush {
 }
 
 var colors = []brush{
-	newBrush(37, "Emergency"), // Emergency          white
+	newBrush(35, "Emergency"), // Emergency          white
 	newBrush(36, "Alert"),     // Alert              cyan
-	newBrush(35, "Critical"),  // Critical           magenta
+	newBrush(37, "io"),        // Critical           magenta
 	newBrush(31, "Error"),     // Error              red
 	newBrush(33, "Warn"),      // Warning            yellow
 	newBrush(32, "Notice"),    // Notice             green
@@ -64,8 +64,8 @@ var colors = []brush{
 // any
 
 func Debug(v ...interface{}) {
-	str := fmt.Sprint(v...)
-	fmt.Println(colors[LevelNotice](str))
+	str := fmt.Sprintln(v...)
+	fmt.Print(colors[LevelNotice](str))
 }
 
 func Debugf(format string, v ...interface{}) {
@@ -74,8 +74,8 @@ func Debugf(format string, v ...interface{}) {
 }
 
 func Info(v ...interface{}) {
-	str := fmt.Sprint(v...)
-	fmt.Println(colors[LevelInformational](str))
+	str := fmt.Sprintln(v...)
+	fmt.Print(colors[LevelInformational](str))
 }
 
 func Infof(format string, v ...interface{}) {
@@ -83,9 +83,19 @@ func Infof(format string, v ...interface{}) {
 	fmt.Println(colors[LevelInformational](str))
 }
 
+func Change(v ...interface{}) {
+	str := fmt.Sprintln(v...)
+	fmt.Print(colors[LevelCritical](str))
+}
+
+func Changef(format string, v ...interface{}) {
+	str := fmt.Sprintf(format, v...)
+	fmt.Println(colors[LevelCritical](str))
+}
+
 func Warn(v ...interface{}) {
-	str := fmt.Sprint(v...)
-	fmt.Println(colors[LevelWarning](str))
+	str := fmt.Sprintln(v...)
+	fmt.Print(colors[LevelWarning](str))
 }
 
 func Warnf(format string, v ...interface{}) {
@@ -94,8 +104,8 @@ func Warnf(format string, v ...interface{}) {
 }
 
 func Error(v ...interface{}) {
-	str := fmt.Sprint(v...)
-	fmt.Println(colors[LevelError](str))
+	str := fmt.Sprintln(v...)
+	fmt.Print(colors[LevelError](str))
 }
 
 func Errorf(format string, v ...interface{}) {
@@ -104,12 +114,12 @@ func Errorf(format string, v ...interface{}) {
 }
 
 func Fatal(v ...interface{}) {
-	str := fmt.Sprint(v...)
-	fmt.Println(colors[LevelCritical](str))
+	str := fmt.Sprintln(v...)
+	fmt.Print(colors[LevelEmergency](str))
 }
 
 func Fatalf(format string, v ...interface{}) {
 	str := fmt.Sprintf(format, v...)
-	fmt.Println(colors[LevelCritical](str))
+	fmt.Println(colors[LevelEmergency](str))
 	os.Exit(1)
 }
