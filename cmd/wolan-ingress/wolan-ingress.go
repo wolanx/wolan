@@ -33,10 +33,7 @@ func main() {
 
 	switch action {
 	case "new":
-		err := ingress.RunNew(domains)
-		if err != nil {
-			log.Info(err.Error())
-		}
+		ingress.RunNew(domains)
 	case "renew":
 		ingress.RunRenew(domains)
 	default:

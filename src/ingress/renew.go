@@ -126,8 +126,6 @@ func RunRenew(args []string) {
 	}
 
 	if client != nil {
-		if err := NginxReload(); err != nil {
-			log.Fatalf("nginx: %v", err)
-		}
+		NginxReload()
 	}
 }

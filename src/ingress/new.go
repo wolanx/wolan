@@ -14,47 +14,46 @@ import (
 	"net"
 
 	"golang.org/x/crypto/acme"
-	"errors"
 	"github.com/zx5435/wolan/src/log"
 )
 
-func RunNew(domains []string) error {
+func RunNew(domains []string) {
 	log.Debug(AcmeURL, domains)
 
 	if len(domains) == 0 {
-		return errors.New("domains = 0")
+		log.Fatal("no domains")
 	}
 
 	MkDirAll(configDir, 0700)
 	MkDirAll(confDir, 0700)
 	MkDirAll(wwwDir, 0755)
 
-	confTpl, indexTpl := LoadTpl()
+	confTpl, err := template.New("siteConf").Parse(getFile("site.conf"))
+	if err != nil {
+		log.Fatalf("parse conf: %v", err)
+	}
+	indexTpl, err := template.New("siteIndex").Parse(getFile("index.html"))
+	if err != nil {
+		log.Fatalf("parse index: %v", err)
+	}
 	arg2dm(domains, confTpl, indexTpl)
 
-	var client *acme.Client
-	return nil
+	NginxReload()
+	time.Sleep(time.Second * 2)
 
-	if len(domains) > 0 {
-		if err := NginxReload(); err != nil {
-			log.Fatalf("nginx: %v", err)
-		}
-		time.Sleep(time.Second * 3)
+	accountKey, err := anyKey(filepath.Join(configDir, accountKeyFile))
+	if err != nil {
+		log.Fatalf("account key: %v", err)
+	}
 
-		accountKey, err := anyKey(filepath.Join(configDir, accountKeyFile))
-		if err != nil {
-			log.Fatalf("account key: %v", err)
-		}
+	client := &acme.Client{
+		Key:          accountKey,
+		DirectoryURL: AcmeURL,
+	}
 
-		client = &acme.Client{
-			Key:          accountKey,
-			DirectoryURL: AcmeURL,
-		}
-
-		if _, err := readConfig(); os.IsNotExist(err) {
-			if err := register(client); err != nil {
-				log.Fatalf("register: %v", err)
-			}
+	if _, err := readConfig(); os.IsNotExist(err) {
+		if err := register(client); err != nil {
+			log.Fatalf("register: %v", err)
 		}
 	}
 
@@ -150,23 +149,9 @@ func RunNew(domains []string) error {
 			log.Info("gen ", cert.fullchain)
 		}
 
-		if err := NginxReload(); err != nil {
-			log.Fatalf("nginx: %v", err)
-		}
+		NginxReload()
 	}
-	return nil
-}
-
-func LoadTpl() (*template.Template, *template.Template) {
-	confTpl, err := template.New("siteConf").Parse(getFile("site.conf"))
-	if err != nil {
-		log.Fatalf("parse conf: %v", err)
-	}
-	indexTpl, err := template.New("siteIndex").Parse(getFile("index.html"))
-	if err != nil {
-		log.Fatalf("parse index: %v", err)
-	}
-	return confTpl, indexTpl
+	return
 }
 
 func arg2dm(dms []string, confTpl *template.Template, indexTpl *template.Template) {

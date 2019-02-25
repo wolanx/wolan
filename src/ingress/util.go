@@ -27,12 +27,15 @@ func sameDir(filename string, perm os.FileMode) error {
 	return nil
 }
 
-func NginxReload() error {
+func NginxReload() {
 	cmd := exec.Command("/bin/sh", "-c", "nginx -s reload")
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
-	return cmd.Run()
+
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err, "nginx")
+	}
 }
 
 // res
@@ -45,20 +48,6 @@ func getFile(filename string) string {
 	}
 	log.Debugf("load file: %s, size: %d", filename, len(bytes))
 	return string(bytes)
-}
-func fetchResource(filename string) ([]byte, error) {
-	if filename == "" {
-		return nil, errors.New("ngx: empty resource name")
-	}
-
-	file, _ := os.Open(tplDir + filename)
-
-	bytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, err
-	}
-
-	return bytes, nil
 }
 
 func writeResource(filename string) error {
