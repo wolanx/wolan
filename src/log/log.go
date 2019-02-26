@@ -51,14 +51,14 @@ func newBrush(color int, t string) brush {
 }
 
 var colors = []brush{
-	newBrush(35, "Emergency"), // Emergency          white
-	newBrush(36, "Alert"),     // Alert              cyan
-	newBrush(37, "io"),        // Critical           magenta
-	newBrush(31, "Error"),     // Error              red
-	newBrush(33, "Warn"),      // Warning            yellow
-	newBrush(32, "Notice"),    // Notice             green
-	newBrush(34, "Info"),      // Informational      blue
-	newBrush(44, "Debug"),     // Debug              Background blue
+	newBrush(35, "Error"),  // Emergency          white
+	newBrush(36, "Alert"),  // Alert              cyan
+	newBrush(37, "io"),     // Critical           magenta
+	newBrush(31, "Error"),  // Error              red
+	newBrush(33, "Warn"),   // Warning            yellow
+	newBrush(32, "Notice"), // Notice             green
+	newBrush(34, "Info"),   // Informational      blue
+	newBrush(44, "Debug"),  // Debug              Background blue
 }
 
 // any
@@ -116,6 +116,7 @@ func Errorf(format string, v ...interface{}) {
 func Fatal(v ...interface{}) {
 	str := fmt.Sprintln(v...)
 	fmt.Print(colors[LevelEmergency](str))
+	os.Exit(1)
 }
 
 func Fatalf(format string, v ...interface{}) {

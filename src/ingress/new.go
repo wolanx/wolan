@@ -36,7 +36,7 @@ func RunNew(domains []string) {
 	if err != nil {
 		log.Fatalf("parse index: %v", err)
 	}
-	arg2dm(domains, confTpl, indexTpl)
+	add2(domains, confTpl, indexTpl)
 
 	NginxReload()
 	time.Sleep(time.Second * 2)
@@ -59,13 +59,13 @@ func RunNew(domains []string) {
 
 	certExpiry := 365 * 24 * time.Hour
 
-	for _, domain := range domains {
-		ipArr, err := net.LookupIP(domain)
-		log.Debug(domain, ipArr)
+	for _, dm := range domains {
+		ipArr, err := net.LookupIP(dm)
+		log.Debug(dm, ipArr)
 
-		domainConfPath := filepath.Join(confDir, domain+".conf")
-		domainRootDir := filepath.Join(wwwDir, domain)
-		domainPublicDir := filepath.Join(domainRootDir, "public")
+		ngConf := filepath.Join(confDir, dm+".conf")
+		dmRoot := filepath.Join(wwwDir, dm)
+		dmCk := filepath.Join(dmRoot, "public")
 
 		data := struct {
 			SiteRoot string
@@ -73,19 +73,21 @@ func RunNew(domains []string) {
 			WithSSL  bool
 		}{
 			SiteRoot: wwwDir,
-			Domain:   domain,
+			Domain:   dm,
 			WithSSL:  true,
 		}
 
-		if err := fileEdit(confTpl, domainConfPath, data); err != nil {
-			log.Fatalf("%s conf: %v", domain, err)
+		if err := fileEdit(confTpl, ngConf, data); err != nil {
+			log.Fatalf("%s conf: %v", dm, err)
 		}
 
-		conf, err := parseSiteConf(domainConfPath)
+		conf, err := parseSiteConf(ngConf)
 		if err != nil {
-			log.Fatalf("%s conf: %v", domain, err)
+			log.Fatalf("%s conf: %v", dm, err)
 		}
-		log.Debug("%#v\n", conf)
+		log.Debugf("%#v\n", conf)
+
+		// no use
 		if err := writeResource(conf.SslDHParam); err != nil {
 			log.Warnf("dhparam: %v", err)
 		}
@@ -93,15 +95,14 @@ func RunNew(domains []string) {
 			log.Warnf("ticket: %v", err)
 		}
 		if err := writeResource(conf.SslTrustedCertificate); err != nil {
-			log.Warnf("ocsp %s: %v", domain, err)
+			log.Warnf("ocsp %s: %v", dm, err)
 		}
 
 		req := &x509.CertificateRequest{
-			Subject: pkix.Name{CommonName: domain},
+			Subject: pkix.Name{CommonName: dm},
 		}
 
-		dnsNames := []string{domain}
-		//dnsNames := []string{domain, "www.zx5435.com", "x.test.zx5435.com"}
+		dnsNames := []string{dm}
 
 		for _, cert := range conf.Certificates {
 			if err := sameDir(cert.privkey, 0700); err != nil {
@@ -122,12 +123,12 @@ func RunNew(domains []string) {
 
 			for _, dnsName := range dnsNames {
 				ctx, cxl := context.WithTimeout(context.Background(), 10*time.Minute)
+				defer cxl()
 
-				if err := authz(ctx, client, domainPublicDir, dnsName); err != nil {
+				if err := createWellKown(ctx, client, dmCk, dnsName); err != nil {
 					log.Debugf("%+v\n", err.Error())
 					log.Fatalf("%s", dnsName)
 				}
-				cxl()
 			}
 
 			ctx, cxl := context.WithTimeout(context.Background(), 30*time.Minute)
@@ -154,7 +155,7 @@ func RunNew(domains []string) {
 	return
 }
 
-func arg2dm(dms []string, confTpl *template.Template, indexTpl *template.Template) {
+func add2(dms []string, confTpl *template.Template, indexTpl *template.Template) {
 	for _, dm := range dms {
 		ngConf := filepath.Join(confDir, dm+".conf")
 		dmRoot := filepath.Join(wwwDir, dm)

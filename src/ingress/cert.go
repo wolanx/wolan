@@ -42,7 +42,7 @@ func register(client *acme.Client) error {
 	return nil
 }
 
-func authz(ctx context.Context, client *acme.Client, domainPublic string, domain string) error {
+func createWellKown(ctx context.Context, client *acme.Client, domainPublic string, domain string) error {
 	z, err := client.Authorize(ctx, domain)
 	if err != nil {
 		return err
@@ -157,7 +157,6 @@ func anyKey(filename string) (crypto.Signer, error) {
 	}
 
 	if strings.Contains(filename, ".ecdsa") {
-
 		privkey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 
 		if err != nil {

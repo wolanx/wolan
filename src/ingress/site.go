@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	confSslRegex = regexp.MustCompile(`(root|ssl_certificate|ssl_certificate_key|ssl_session_ticket_key|ssl_dhparam|ssl_trusted_certificate)\s+([a-z0-9_\-\.\/]+?);`)
+	confSslRegex = regexp.MustCompile(`(root|ssl_certificate|ssl_certificate_key|ssl_session_ticket_key|ssl_dhparam|ssl_trusted_certificate)\s+([A-Za-z0-9_\-\.\/]+?);`)
 )
 
 type ngxCertificate struct {
@@ -22,20 +22,20 @@ type ngxSiteConf struct {
 	DomainPublicDir       string
 }
 
-func parseSiteConf(confFilename string) (*ngxSiteConf, error) {
-	text, err := ioutil.ReadFile(confFilename)
+func parseSiteConf(confFile string) (*ngxSiteConf, error) {
+	text, err := ioutil.ReadFile(confFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	matches := confSslRegex.FindAllStringSubmatch(string(text), -1)
+	str := string(text)
+	matches := confSslRegex.FindAllStringSubmatch(str, -1)
 
 	var conf = &ngxSiteConf{}
 	var cert *ngxCertificate
 
 	for _, match := range matches {
-
 		if len(match) == 3 {
 			key, value := match[1], match[2]
 
@@ -72,7 +72,6 @@ func parseSiteConf(confFilename string) (*ngxSiteConf, error) {
 				}
 			}
 		}
-
 	}
 
 	return conf, nil

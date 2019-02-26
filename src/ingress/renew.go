@@ -95,8 +95,8 @@ func RunRenew(args []string) {
 			for _, dnsName := range c.DNSNames {
 				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 
-				if err := authz(ctx, client, conf.DomainPublicDir, dnsName); err != nil {
-					log.Fatalf("authz %s: %v", dnsName, err)
+				if err := createWellKown(ctx, client, conf.DomainPublicDir, dnsName); err != nil {
+					log.Fatalf("createWellKown %s: %v", dnsName, err)
 				}
 				cancel()
 			}

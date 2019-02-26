@@ -28,6 +28,7 @@ func sameDir(filename string, perm os.FileMode) error {
 }
 
 func NginxReload() {
+	return // TODO del
 	cmd := exec.Command("/bin/sh", "-c", "nginx -s reload")
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
@@ -52,15 +53,15 @@ func getFile(filename string) string {
 
 func writeResource(filename string) error {
 	if filename == "" {
-		return errors.New("ngx: empty resource name")
+		return errors.New("filename is null")
 	}
 
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		if err := sameDir(filename, 0700); err != nil {
 			return err
 		}
-		fileCtn := getFile(filepath.Base(filename))
-		return ioutil.WriteFile(filename, []byte(fileCtn), 0600)
+		str := getFile(filepath.Base(filename))
+		return ioutil.WriteFile(filename, []byte(str), 0600)
 	}
 
 	return nil

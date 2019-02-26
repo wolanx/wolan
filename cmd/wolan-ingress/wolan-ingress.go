@@ -25,9 +25,12 @@ func main() {
 		ingress.AcmeURL = "https://acme-v01.api.letsencrypt.org/directory"
 	}
 
-	// test
-	action = "new"
-	domains = []string{"www.test.com"}
+	if env != "prod" {
+		// test
+		action = "new"
+		domains = []string{"www.test.com"}
+	}
+	ingress.Env = env
 
 	log.Infof("action: %s, domains: %s", action, domains)
 
