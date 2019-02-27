@@ -28,7 +28,9 @@ func sameDir(filename string, perm os.FileMode) error {
 }
 
 func NginxReload() {
-	return // TODO del
+	if TEST {
+		return
+	}
 	cmd := exec.Command("/bin/sh", "-c", "nginx -s reload")
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr

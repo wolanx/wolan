@@ -30,7 +30,8 @@ func main() {
 		action = "new"
 		domains = []string{"www.test.com"}
 	}
-	ingress.Env = env
+	ingress.TEST = env != "prod"
+	ingress.LoadConfig()
 
 	log.Infof("action: %s, domains: %s", action, domains)
 
