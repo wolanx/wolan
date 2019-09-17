@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zx5435/wolan/src/log"
+	"github.com/zx5435/wolan/common/log"
 	"golang.org/x/crypto/acme"
 )
 

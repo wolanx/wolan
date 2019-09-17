@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
+	"github.com/zx5435/wolan/common/log"
 	"github.com/zx5435/wolan/src/ingress"
-	"github.com/zx5435/wolan/src/log"
 )
 
 func main() {

@@ -8,7 +8,7 @@ import (
 
 	"golang.org/x/crypto/acme"
 
-	"github.com/zx5435/wolan/src/log"
+	"github.com/zx5435/wolan/common/log"
 )
 
 const (
@@ -36,6 +36,7 @@ func LoadConfig() {
 		configDir = "/Users/zhaoyujie/Desktop/test/ig"
 		tplDir = "/Users/zhaoyujie/go/src/github.com/zx5435/wolan/tpl/ingress/rc/"
 	}
+
 }
 
 type userConfig struct {

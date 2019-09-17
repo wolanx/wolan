@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/zx5435/wolan/src/log"
+	"github.com/zx5435/wolan/common/log"
 	"golang.org/x/crypto/acme"
 )
 
@@ -156,6 +156,9 @@ func RunNew(domains []string) {
 }
 
 func add2(dms []string, confTpl *template.Template, indexTpl *template.Template) {
+	log.DepL("add2 start")
+	defer log.DepL("add2 end")
+
 	for _, dm := range dms {
 		ngConf := filepath.Join(confDir, dm+".conf")
 		dmRoot := filepath.Join(wwwDir, dm)

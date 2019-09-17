@@ -8,10 +8,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/zx5435/wolan/config"
-	"github.com/zx5435/wolan/util"
-	"gopkg.in/yaml.v2"
+	"github.com/zx5435/wolan/common/util"
 	"github.com/zx5435/wolan/compose"
+	"github.com/zx5435/wolan/config"
 )
 
 type WolanConfig struct {

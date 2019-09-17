@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/zx5435/wolan/src/log"
+	"github.com/zx5435/wolan/common/log"
 )
 
 func MkDirAll(dir string, perm os.FileMode) {
