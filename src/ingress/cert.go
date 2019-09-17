@@ -13,10 +13,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
-
-	"path/filepath"
 
 	"golang.org/x/crypto/acme"
 )

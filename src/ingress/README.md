@@ -5,6 +5,7 @@ docker cp ./tpl/ingress/rc wolan-ingress:/go/src/github.com/zx5435/wolan/tpl/ing
 ## 1 
 docker run -it -d --name wolan-ingress -p443:443 -p80:80 zx5435/wolan:ingress
 docker run -it -d --name wolan-ingress -p443:443 -p80:80 -v "$PWD":/etc/nginx/conf.d zx5435/wolan:ingress
+docker run -it -d --name wolan-ingress -p443:443 -p80:80 -v "$PWD":/usr/share/nginx/html zx5435/wolan:ingress
 docker run -it -d --name wolan-ingress --net=host -p443:443 -p80:80 zx5435/wolan:ingress
 
 ## 2
