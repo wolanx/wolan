@@ -1,0 +1,45 @@
+# GraphQL从入门到放弃 https://xeblog.cn/articles/6
+# GraphQL 零基础教程 https://segmentfault.com/a/1190000021899271
+
+# 查询相关接口
+type Query {
+    # 通过id获取用户信息
+    getTaskByName(name: String!): TaskDO
+    # 用户信息列表
+    listTask: [TaskDO]
+}
+
+# 变更相关接口
+#type Mutation {
+#    # 添加用户信息
+#    saveUser(user: addUserInput!): Boolean
+#    # 删除用户信息
+#    deleteUser(id: Int!): Boolean
+#    # 更新用户信息
+#    updateUser(user: updateUserInput!): Boolean
+#}
+
+# 用户信息对象
+type TaskDO {
+    # 编号
+    #    id: Int!
+    # 用户名
+    name: String!
+    # 密码
+    #    password: String!
+    # 年龄
+}
+
+# 添加用户信息输入参数
+#input addUserInput {
+#    id: Int!
+#    username: String!
+#    password: String!
+#}
+
+# 更新用户信息输入参数
+#input updateUserInput {
+#    id: Int!
+#    username: String!
+#    password: String!
+#}

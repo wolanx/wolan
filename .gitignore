@@ -1,6 +1,12 @@
-/.idea
+.idea
 
 # my
 /__work__
 /cmd/*/*
 !/cmd/*/*.go
+
+# grade
+.gradle
+gradle
+build
+
