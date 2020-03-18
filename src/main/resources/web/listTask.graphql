@@ -1,0 +1,9 @@
+{
+    listTask{
+        name
+        version
+        git {
+            url
+        }
+    }
+}

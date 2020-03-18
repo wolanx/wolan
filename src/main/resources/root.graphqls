@@ -1,7 +1,3 @@
-# GraphQL从入门到放弃 https://xeblog.cn/articles/6
-# GraphQL 零基础教程 https://segmentfault.com/a/1190000021899271
-
-# 查询相关接口
 type Query {
     # 通过id获取用户信息
     getTaskByName(name: String!): TaskDO
@@ -21,13 +17,14 @@ type Query {
 
 # 用户信息对象
 type TaskDO {
-    # 编号
-    #    id: Int!
-    # 用户名
     name: String!
-    # 密码
-    #    password: String!
-    # 年龄
+    version : String
+    git: GitBean
+}
+
+type GitBean {
+    url:String
+    branch:String
 }
 
 # 添加用户信息输入参数
