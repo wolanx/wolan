@@ -1,9 +1,11 @@
 {
     listTask{
+        sid
         name
         version
         git {
             url
+            branch
         }
     }
 }

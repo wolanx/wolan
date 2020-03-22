@@ -17,6 +17,7 @@ type Query {
 
 # 用户信息对象
 type TaskDO {
+    sid: String!
     name: String!
     version : String
     git: GitBean

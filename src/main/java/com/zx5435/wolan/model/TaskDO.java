@@ -15,13 +15,14 @@ public class TaskDO {
      * docker-compose: "docker-composer.yml"
      */
 
+    private String sid;
     private String version;
     private String name;
 
     private GitBean git;
 
     @Data
-    private static class GitBean {
+    public static class GitBean {
         private String url;
         private String branch;
     }
