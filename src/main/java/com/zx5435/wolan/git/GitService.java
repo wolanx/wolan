@@ -14,19 +14,12 @@ public class GitService {
         GitService.cloneRepository(url, WoConf.WorkPath + "/" + task.getSid() + "/code");
     }
 
-    public static String cloneRepository(String url, String localPath) {
+    private static void cloneRepository(String url, String localPath) {
         try {
-            System.out.println("开始下载......");
-
             CloneCommand cc = Git.cloneRepository().setURI(url);
             cc.setDirectory(new File(localPath)).call();
-
-            System.out.println("下载完成......");
-
-            return "success";
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
         }
     }
 

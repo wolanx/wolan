@@ -5,7 +5,7 @@ import com.zx5435.wolan.other.WoConf;
 
 import java.io.FileNotFoundException;
 
-public class TestG {
+public class Git {
 
     public static void main(String[] args) {
         try {
