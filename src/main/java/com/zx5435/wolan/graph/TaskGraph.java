@@ -19,10 +19,12 @@ import java.util.Objects;
 @Component
 public class TaskGraph implements GraphQLQueryResolver {
 
-    public static TaskDO getTaskByName(String sid) throws FileNotFoundException {
+    public static TaskDO getTaskByName(String sid) throws IOException {
         Yaml yaml = new Yaml();
-        File woFile = new File(WoConf.WorkPath + "/" + sid + "/wolan.yaml");
-        Object obj = yaml.load(new FileInputStream(woFile));
+        File f = new File(WoConf.WorkPath + "/" + sid + "/wolan.yml");
+        FileInputStream fIn = new FileInputStream(f);
+        Object obj = yaml.load(fIn);
+        fIn.close();
 
         ObjectMapper mapper = new ObjectMapper();
         TaskDO task = mapper.convertValue(obj, TaskDO.class);
@@ -40,9 +42,7 @@ public class TaskGraph implements GraphQLQueryResolver {
 
         for (File taskFile : Objects.requireNonNull(taskFiles)) {
             if (taskFile.isDirectory()) {
-                String taskName = taskFile.getName();
-                TaskDO task = getTaskByName(taskName);
-                res.add(task);
+                res.add(getTaskByName(taskFile.getName()));
             }
         }
 

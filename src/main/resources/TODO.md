@@ -1,14 +1,29 @@
 task
  - [x] load
+ - [ ] config
 
 
 git
  - [x] clone
  - [ ] pull update
 
-pipeline
- - [ ] build
- - [ ] deploy
+
+pipeline in Docker
+ - [ ] load setting from
+   - [ ] self
+   - [ ] code/xx
+ - [ ] job
 
 
+k8s
+ - [ ] init
+ - [ ] load
+ - [ ] apply
 
+
+ingress
+ - [ ] https
+
+
+other
+ - [ ] image register
