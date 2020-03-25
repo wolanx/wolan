@@ -17,9 +17,16 @@ public class K8s {
 
     private static final String KUBECONFIG = "./src/main/java/com/zx5435/wolan/k8s/kubeconfig.yaml";
 
-    public static void main(String[] args) throws IOException, ApiException {
+    static {
         ApiClient client = Config.fromConfig(KUBECONFIG);
         Configuration.setDefaultApiClient(client);
+    }
+
+    public static void main(String[] args) throws IOException, ApiException {
+
+    }
+
+    public static void listPod() throws IOException, ApiException {
 
         CoreV1Api api = new CoreV1Api();
         V1PodList list = api.listPodForAllNamespaces(null, null, null, null, null, null, null, null, null);
