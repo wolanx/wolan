@@ -16,8 +16,7 @@ pipeline in Docker
 
 
 k8s
- - [x] init
- - [ ] load
+ - [x] load ns pod
  - [ ] apply
 
 
