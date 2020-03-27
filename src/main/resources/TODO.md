@@ -17,7 +17,7 @@ pipeline in Docker
 
 k8s
  - [x] load ns pod
- - [ ] apply
+ - [x] apply
 
 
 ingress

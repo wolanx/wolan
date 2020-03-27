@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-fs
+spec:
+  selector:
+    matchLabels:
+      app: go-fs
+  template:
+    metadata:
+      labels:
+        app: go-fs
+    spec:
+      containers:
+        - name: go-fs
+          image: zx5435/go-fs:20191211
+          ports:
+            - containerPort: 8080
