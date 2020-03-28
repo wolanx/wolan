@@ -29,7 +29,15 @@ public class K8s {
         Configuration.setDefaultApiClient(client);
     }
 
-    public static void main(String[] args) throws ApiException, IOException {
+    public static void main(String[] args) {
+        try {
+            listPod();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void applyPod() throws ApiException, IOException {
         AppsV1Api api = new AppsV1Api();
 
         File file = new File("./src/main/java/com/zx5435/wolan/k8s/go-fs.yaml");
