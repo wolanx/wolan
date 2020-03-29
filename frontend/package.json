@@ -7,7 +7,9 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
+    "@ant-design/icons": "latest",
     "antd": "^4.0.4",
+    "babel-plugin-import": "^1.13.0",
     "dva": "^2.4.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
