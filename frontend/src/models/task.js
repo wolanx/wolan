@@ -1,7 +1,5 @@
 import * as task from '../services/task'
 
-const delay = timeout => new Promise(resolve => setTimeout(resolve, timeout))
-
 export default {
 
     namespace: 'task',
