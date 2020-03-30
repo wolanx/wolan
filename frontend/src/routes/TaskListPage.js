@@ -14,7 +14,7 @@ class TaskListPage extends React.Component {
         return (
             <ul>
                 {this.props.list.map((v, k) => {
-                    return <li key={k}>{v}</li>
+                    return <li key={k}>{v.name}</li>
                 })}
             </ul>
         )

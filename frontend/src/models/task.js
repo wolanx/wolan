@@ -5,11 +5,10 @@ export default {
     namespace: 'task',
 
     state: {
-        list: [1, 2, 3],
+        list: [],
     },
     reducers: {
         setList (state, action) {
-            console.log('setList', action)
             return {
                 ...state,
                 list: action.payload,
@@ -18,11 +17,10 @@ export default {
     },
     effects: {
         * getList (action, { call, put }) {
-            console.log('getList')
             // yield call(delay, 1000)
-            const data = yield call(task.getList)
-            console.log('data', data)
-            yield put({ type: 'setList', payload: ['qwe', 13, 12, 3, 123, 123, 3123] })
+            const { data: res } = yield call(task.getList)
+            console.log('data', res.data.listTask)
+            yield put({ type: 'setList', payload: res.data.listTask })
         },
     },
 
