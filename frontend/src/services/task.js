@@ -1,10 +1,16 @@
-import request from '../utils/request'
+import request, { graphql } from '../utils/request'
+import { gql } from 'apollo-boost'
 
 export function getList () {
-    // return request(`http://localhost:8080/other/aaa`)
-    return request(`http://localhost:8080/graphql`,{
-        method: 'POST',
-        body: `{"query":"{\\n  listTask{\\n    name\\n  }\\n}\\n","variables":null,"operationName":null}`,
+    return graphql({
+        query: gql`
+            {
+                listTask{
+                    name
+                    version
+                }
+            }
+        `
     })
 }
 
@@ -14,5 +20,10 @@ export function getPost () {
         method: 'POST',
         body: JSON.stringify(values),
     })
+
+    // return request(`http://localhost:8080/graphql`, {
+    //     method: 'POST',
+    //     body: `{"query":"{\\n  listTask{\\n    name\\n  }\\n}\\n","variables":null,"operationName":null}`,
+    // })
 }
 

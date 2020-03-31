@@ -1,4 +1,9 @@
 import fetch from 'dva/fetch'
+import ApolloClient from 'apollo-boost'
+
+const client = new ApolloClient({
+    uri: 'http://localhost:8080/graphql',
+})
 
 // function delay (timeout) {
 //     return new Promise(resolve => setTimeout(resolve, timeout))
@@ -9,6 +14,7 @@ function parseJSON (response) {
 }
 
 function checkStatus (response) {
+    console.log('response', response)
     if (response.status >= 200 && response.status < 300) {
         return response
     }
@@ -29,6 +35,12 @@ export default function request (url, options) {
     return fetch(url, options)
         .then(checkStatus)
         .then(parseJSON)
+        .then(data => ({ data }))
+        .catch(err => ({ err }))
+}
+
+export function graphql (options) {
+    return client.query(options)
         .then(data => ({ data }))
         .catch(err => ({ err }))
 }

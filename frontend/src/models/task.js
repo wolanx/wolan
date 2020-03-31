@@ -1,4 +1,21 @@
-import * as task from '../services/task'
+import { graphql } from '../utils/request'
+import { gql } from 'apollo-boost'
+
+function getList () {
+    return graphql({
+        query: gql`
+            {
+                listTask{
+                    name
+                    version
+                    git{
+                        branch
+                    }
+                }
+            }
+        `
+    })
+}
 
 export default {
 
@@ -18,7 +35,7 @@ export default {
     effects: {
         * getList (action, { call, put }) {
             // yield call(delay, 1000)
-            const { data: res } = yield call(task.getList)
+            const { data: res } = yield call(getList)
             console.log('data', res.data.listTask)
             yield put({ type: 'setList', payload: res.data.listTask })
         },
