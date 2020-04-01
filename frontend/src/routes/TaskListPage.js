@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'dva'
+import { Card, Col, Row } from 'antd'
 
 @connect(state => ({
     list: state.task.list
@@ -12,11 +13,17 @@ import { connect } from 'dva'
 class TaskListPage extends React.Component {
     render () {
         return (
-            <ul>
+            <Row gutter={16}>
                 {this.props.list.map((v, k) => {
-                    return <li key={k}>{v.name}</li>
+                    return (
+                        <Col span={8}>
+                            <Card title={v.name}>
+                                {v.git.branch}
+                            </Card>
+                        </Col>
+                    )
                 })}
-            </ul>
+            </Row>
         )
     }
 

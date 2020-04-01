@@ -9,6 +9,7 @@ function getList () {
                     name
                     version
                     git{
+                        url
                         branch
                     }
                 }
