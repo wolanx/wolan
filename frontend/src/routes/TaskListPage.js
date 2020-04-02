@@ -13,10 +13,10 @@ import { Card, Col, Row } from 'antd'
 class TaskListPage extends React.Component {
     render () {
         return (
-            <Row gutter={16}>
+            <Row gutter={[16, 16]} style={{ margin: 0 }}>
                 {this.props.list.map((v, k) => {
                     return (
-                        <Col span={8}>
+                        <Col span={6} key={k}>
                             <Card title={v.name}>
                                 {v.git.branch}
                             </Card>
