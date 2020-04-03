@@ -29,14 +29,14 @@ export default class LayoutPage extends Component {
                     <Menu mode="inline">
                         <Menu.Item key="1">
                             <Link to={'/task/list'}>
-                                <PieChartOutlined/>
-                                <span>Option 1</span>
+                                <DesktopOutlined/>
+                                <span>Task List</span>
                             </Link>
                         </Menu.Item>
                         <Menu.Item key="2">
                             <Link to={'/task/info'}>
-                                <DesktopOutlined/>
-                                <span>taskinfo</span>
+                                <PieChartOutlined/>
+                                <span>Task Info</span>
                             </Link>
                         </Menu.Item>
                     </Menu>
@@ -50,9 +50,9 @@ export default class LayoutPage extends Component {
                     </Header>
                     <Content className={css.content}>
                         <Switch>
-                            <Route path="/" exact component={IndexPage}/>
-                            <Route path="/task/list" component={TaskListPage}/>
-                            <Route path="/task/info" component={TaskInfoPage}/>
+                            <Route exact path="/" component={IndexPage}/>
+                            <Route exact path="/task/list" component={TaskListPage}/>
+                            <Route exact path="/task/:name" component={TaskInfoPage}/>
                         </Switch>
                     </Content>
                     <Footer className={css.footer}>©2020</Footer>

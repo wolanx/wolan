@@ -1,11 +1,9 @@
 import dva from 'dva'
 import './index.css'
 
-const createHistory = require('history').createHashHistory
-
 // 1. Initialize
 const app = dva({
-    history: createHistory(),
+    // history: createHistory(),
 })
 
 // 2. Plugins

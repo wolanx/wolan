@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'dva'
 import { Card, Col, Row } from 'antd'
+import { Link } from 'dva/router'
 
 @connect(state => ({
     list: state.task.list
@@ -17,7 +18,7 @@ class TaskListPage extends React.Component {
                 {this.props.list.map((v, k) => {
                     return (
                         <Col span={6} key={k}>
-                            <Card title={v.name}>
+                            <Card title={v.name} extra={<Link to={`/task/${v.name}`}>More</Link>}>
                                 {v.git.branch}
                             </Card>
                         </Col>
