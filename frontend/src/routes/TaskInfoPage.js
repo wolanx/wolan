@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'dva'
 import { Button, Descriptions, PageHeader } from 'antd'
+import MHeader from '../components/MHeader'
 
 @connect()
 export default class TaskInfoPage extends React.Component {
@@ -9,7 +10,8 @@ export default class TaskInfoPage extends React.Component {
 
     render () {
         return (
-            <div>
+            <>
+                <MHeader title={'Task details'}/>
                 <PageHeader
                     onBack={() => window.history.back()}
                     title={this.taskName}
@@ -35,7 +37,7 @@ export default class TaskInfoPage extends React.Component {
                     </Descriptions>
                 </PageHeader>
                 <div>task info {this.taskName}</div>
-            </div>
+            </>
         )
     }
 

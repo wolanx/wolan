@@ -1,14 +1,44 @@
 import { Layout, Menu } from 'antd'
-import { DesktopOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PieChartOutlined } from '@ant-design/icons'
+import { DesktopOutlined, PieChartOutlined,LinkOutlined } from '@ant-design/icons'
 import React, { Component } from 'react'
 
-import css from './layout.less'
-import IndexPage from './IndexPage'
+import css from './Layout.less'
 import { Link, Route, Switch } from 'dva/router'
 import TaskInfoPage from './TaskInfoPage'
 import TaskListPage from './TaskListPage'
+import IndexPage from './IndexPage'
 
-const { Header, Content, Footer, Sider } = Layout
+const { Content, Sider } = Layout
+
+export const NotFound404 = (props) => (
+    <div className="whoops-404">
+        <h1>没有页面可以匹配</h1>
+    </div>
+)
+
+let routes = [
+    {
+        path: '/',
+        component: IndexPage,
+        exact: true
+    },
+    {
+        path: '/test',
+        component: TaskListPage
+    },
+    {
+        path: '/tasks',
+        component: TaskListPage
+    },
+    {
+        path: '/task/:name',
+        component: TaskInfoPage
+    },
+    {
+        path: '*',
+        component: NotFound404
+    },
+]
 
 export default class LayoutPage extends Component {
     state = {
@@ -24,38 +54,41 @@ export default class LayoutPage extends Component {
     render () {
         return (
             <Layout style={{ minHeight: '100vh' }}>
-                <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+                <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.toggle}>
                     <Link className={css.logo} to={'/'}>Logo</Link>
                     <Menu mode="inline">
                         <Menu.Item key="1">
-                            <Link to={'/task/list'}>
+                            <Link to={'/tasks'}>
                                 <DesktopOutlined/>
-                                <span>Task List</span>
+                                <span>Dashboard</span>
                             </Link>
                         </Menu.Item>
                         <Menu.Item key="2">
-                            <Link to={'/task/info'}>
+                            <Link to={'/task/go-fs'}>
                                 <PieChartOutlined/>
                                 <span>Task Info</span>
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="3">
+                            <Link to={'/no'}>
+                                <LinkOutlined/>
+                                <span>Not found</span>
                             </Link>
                         </Menu.Item>
                     </Menu>
                 </Sider>
                 <Layout>
-                    <Header className={css.header} style={{ padding: 0 }}>
-                        {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                            className: 'trigger',
-                            onClick: this.toggle,
-                        })}
-                    </Header>
-                    <Content className={css.content}>
+                    <Content>
                         <Switch>
-                            <Route exact path="/" component={IndexPage}/>
-                            <Route exact path="/task/list" component={TaskListPage}/>
-                            <Route exact path="/task/:name" component={TaskInfoPage}/>
+                            {
+                                routes.map((v, k) => {
+                                    return <Route exact={v.exact} key={k} path={v.path} render={props => (
+                                        <v.component {...props}/>
+                                    )}/>
+                                })
+                            }
                         </Switch>
                     </Content>
-                    <Footer className={css.footer}>©2020</Footer>
                 </Layout>
             </Layout>
         )
