@@ -2,7 +2,7 @@ import { Layout, Menu } from 'antd'
 import { DesktopOutlined, PieChartOutlined,LinkOutlined } from '@ant-design/icons'
 import React, { Component } from 'react'
 
-import css from './Layout.less'
+import css from '../assets/css/main.less'
 import { Link, Route, Switch } from 'dva/router'
 import TaskInfoPage from './TaskInfoPage'
 import TaskListPage from './TaskListPage'

@@ -1,0 +1,72 @@
+@import "color";
+
+:global {
+    body {
+        //font-family: Montserrat, serif;
+    }
+
+    a {
+        color: @blue;
+    }
+
+    .fl {
+        float: left;
+    }
+
+    .fr {
+        float: right;
+    }
+}
+
+.logo {
+    display: block;
+    height: 32px;
+    line-height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 16px;
+    color: #fff;
+    text-align: center;
+}
+
+.mHeader {
+    padding: 12px 15px 0 15px;
+    margin-bottom: 15px;
+    background: #fff;
+    line-height: 1;
+
+    :global(.p1) {
+        font-size: 17px;
+        margin: 0 0 8px;
+    }
+
+    :global(.p2) {
+        font-size: 12px;
+
+        :global(.ant-breadcrumb) {
+            font-size: 12px;
+
+            a {
+                color: @blue;
+            }
+        }
+    }
+}
+
+.mPanel {
+    margin: 0 15px 15px 15px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    background: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 2px;
+
+    :global(.p1) {
+        height: 45px;
+        line-height: 45px;
+        color: #767676;
+        background-color: #f6f6f6;
+    }
+
+    :global(.p2) {
+        padding: 10px;
+    }
+}

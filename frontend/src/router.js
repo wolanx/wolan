@@ -1,6 +1,6 @@
 import React from 'react'
 import { Router } from 'dva/router'
-import LayoutPage from './routes/LayoutPage'
+import LayoutPage from './pages/LayoutPage'
 
 function RouterConfig ({ history }) {
     return (
