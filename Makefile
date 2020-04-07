@@ -1,8 +1,12 @@
+.PHONY: build
+
 default:
 	cat Makefile
 
 build:
+	./gradlew bootJar
 	docker build -f __cicd__/Dockerfile -t zx5435/wolan .
+	docker run -it -d --name wolan -p8080:8080 zx5435/wolan
 
 up:
 	docker stop wolan

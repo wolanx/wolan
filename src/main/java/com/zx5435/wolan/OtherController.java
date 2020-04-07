@@ -11,9 +11,8 @@ import java.util.HashMap;
 @CrossOrigin
 public class OtherController {
 
-    @RequestMapping("aaa")
-    public Object qwe() throws InterruptedException {
-        Thread.sleep(2000);
+    @RequestMapping("test")
+    public Object test() {
         HashMap<Object, Object> m = new HashMap<>();
         m.put("data", new int[]{22, 3, 4, 5, 7, 1});
         return m;

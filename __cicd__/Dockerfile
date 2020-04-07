@@ -1,12 +1,11 @@
-FROM alpine:3.8
+FROM openjdk:8-alpine
 
 WORKDIR /app
 
-COPY ./cmd/wolan-server/wolan-server /app/cmd/wolan-server/wolan-server
-COPY ./frontend/build /app/frontend/build
+COPY ./build/libs/wolan.jar /app/
 
 RUN ls -l
 
-EXPOSE 23456
+EXPOSE 8080
 
-CMD ["./cmd/wolan-server/wolan-server"]
+CMD ["java", "-jar","wolan.jar"]
