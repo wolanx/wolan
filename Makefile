@@ -6,11 +6,15 @@ default:
 build:
 	./gradlew bootJar
 	docker build -f __cicd__/Dockerfile -t zx5435/wolan .
-	docker run -it -d --name wolan -p8080:8080 zx5435/wolan
 
 up:
 	docker stop wolan
 	docker rm wolan
+	docker run -it -d --name wolan -p8080:8080 \
+	    -v "$$PWD/__task__":/app/__task__ \
+	    zx5435/wolan
+
+up222222222222222:
 	cd __work__ && docker run -it -d --name wolan -p 4321:23456 \
 	    -v "$$PWD":/app/__work__ \
 	    -v "/var/run/docker.sock:/var/run/docker.sock" \
