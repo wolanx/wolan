@@ -7,7 +7,6 @@
 
 # grade
 .gradle
-gradle
 build
 out
 

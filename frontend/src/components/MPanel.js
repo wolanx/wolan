@@ -6,7 +6,7 @@ class MPanel extends React.Component {
     render () {
         return (
             <section className={css.mPanel}>
-                <div className={'p1'}>Title</div>
+                <div className={'p1'}>{this.props.title}</div>
                 <div className={'p2'}>
                     {this.props.children}
                 </div>

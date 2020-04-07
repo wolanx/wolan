@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Button, Descriptions, PageHeader } from 'antd'
+import { Badge, Descriptions } from 'antd'
 import MHeader from '../components/MHeader'
+import MPanel from '../components/MPanel'
 
 @connect()
 export default class TaskInfoPage extends React.Component {
@@ -12,31 +13,36 @@ export default class TaskInfoPage extends React.Component {
         return (
             <>
                 <MHeader title={'Task details'}/>
-                <PageHeader
-                    onBack={() => window.history.back()}
-                    title={this.taskName}
-                    subTitle="This is a subtitle"
-                    extra={[
-                        <Button key="3">Operation</Button>,
-                        <Button key="2">Operation</Button>,
-                        <Button key="1" type="primary">
-                            Primary
-                        </Button>,
-                    ]}
-                >
-                    <Descriptions size="small" column={3}>
-                        <Descriptions.Item label="Created">Lili Qu</Descriptions.Item>
-                        <Descriptions.Item label="Association">
-                            <a>421421</a>
+                <MPanel title={'Info'}>
+                    <Descriptions bordered>
+                        <Descriptions.Item label="Name">{this.taskName}</Descriptions.Item>
+                        <Descriptions.Item label="Billing Mode">Prepaid</Descriptions.Item>
+                        <Descriptions.Item label="Automatic Renewal">YES</Descriptions.Item>
+                        <Descriptions.Item label="Order time">2018-04-24 18:00:00</Descriptions.Item>
+                        <Descriptions.Item label="Usage Time" span={2}>
+                            2019-04-24 18:00:00
                         </Descriptions.Item>
-                        <Descriptions.Item label="Creation Time">2017-01-10</Descriptions.Item>
-                        <Descriptions.Item label="Effective Time">2017-10-10</Descriptions.Item>
-                        <Descriptions.Item label="Remarks">
-                            Gonghu Road, Xihu District, Hangzhou, Zhejiang, China
+                        <Descriptions.Item label="Status" span={3}>
+                            <Badge status="processing" text="Running"/>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Negotiated Amount">$80.00</Descriptions.Item>
+                        <Descriptions.Item label="Discount">$20.00</Descriptions.Item>
+                        <Descriptions.Item label="Official Receipts">$60.00</Descriptions.Item>
+                        <Descriptions.Item label="Config Info">
+                            Data disk type: MongoDB
+                            <br/>
+                            Database version: 3.4
+                            <br/>
+                            Package: dds.mongo.mid
+                            <br/>
+                            Storage space: 10 GB
+                            <br/>
+                            Replication factor: 3
+                            <br/>
+                            Region: East China 1<br/>
                         </Descriptions.Item>
                     </Descriptions>
-                </PageHeader>
-                <div>task info {this.taskName}</div>
+                </MPanel>
             </>
         )
     }
