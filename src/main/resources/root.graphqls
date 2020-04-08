@@ -1,21 +1,11 @@
 type Query {
-    # 通过id获取用户信息
+    # 通过id获取
     getTaskByName(name: String!): TaskDO
-    # 用户信息列表
+    # 信息列表
     listTask: [TaskDO]
 }
 
-# 变更相关接口
-#type Mutation {
-#    # 添加用户信息
-#    saveUser(user: addUserInput!): Boolean
-#    # 删除用户信息
-#    deleteUser(id: Int!): Boolean
-#    # 更新用户信息
-#    updateUser(user: updateUserInput!): Boolean
-#}
-
-# 用户信息对象
+# 信息对象
 type TaskDO {
     sid: String!
     name: String!
@@ -27,6 +17,16 @@ type GitBean {
     url:String
     branch:String
 }
+
+# 变更相关接口
+#type Mutation {
+#    # 添加用户信息
+#    saveUser(user: addUserInput!): Boolean
+#    # 删除用户信息
+#    deleteUser(id: Int!): Boolean
+#    # 更新用户信息
+#    updateUser(user: updateUserInput!): Boolean
+#}
 
 # 添加用户信息输入参数
 #input addUserInput {

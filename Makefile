@@ -4,7 +4,7 @@ default:
 	cat Makefile
 
 build:
-	./gradlew bootJar
+	#./gradlew bootJar
 	docker build -f __cicd__/Dockerfile -t zx5435/wolan .
 
 up:
