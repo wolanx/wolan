@@ -17,11 +17,9 @@ FROM openjdk:8-alpine
 
 WORKDIR /www
 
-COPY --from=go-builder /www/dist /www/src/main/resources/static
-COPY --from=go-builder /www/dist/index.html /www/src/main/resources/templates/site/index.html
+COPY --from=go-builder /www/dist /www/resources/static
+COPY --from=go-builder /www/dist/index.html /www/resources/templates/site/index.html
 COPY ./build/libs/wolan.jar /www/
-
-RUN ls -l /www/src/main/resources
 
 RUN ls -l
 

@@ -6,3 +6,6 @@ spring:
     name: wolan
   thymeleaf:
     cache: false
+    prefix: file:${user.dir}/resources/templates/
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:/www/resources/
