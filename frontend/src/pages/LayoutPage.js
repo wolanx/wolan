@@ -1,9 +1,9 @@
 import { Layout, Menu } from 'antd'
-import { DesktopOutlined, PieChartOutlined,LinkOutlined } from '@ant-design/icons'
+import { DesktopOutlined, LinkOutlined, PieChartOutlined } from '@ant-design/icons'
 import React, { Component } from 'react'
 
 import css from '../assets/css/main.less'
-import { Link, Route, Switch } from 'dva/router'
+import { Link, Route, Switch, withRouter } from 'dva/router'
 import TaskInfoPage from './TaskInfoPage'
 import TaskListPage from './TaskListPage'
 import IndexPage from './IndexPage'
@@ -40,6 +40,7 @@ let routes = [
     },
 ]
 
+@withRouter
 export default class LayoutPage extends Component {
     state = {
         collapsed: false,
@@ -82,9 +83,10 @@ export default class LayoutPage extends Component {
                         <Switch>
                             {
                                 routes.map((v, k) => {
-                                    return <Route exact={v.exact} key={k} path={v.path} render={props => (
-                                        <v.component {...props}/>
-                                    )}/>
+                                    return <Route exact={v.exact} key={k} path={v.path} render={props => {
+                                        console.log(v.path, props.match)
+                                        return <v.component {...props}/>
+                                    }}/>
                                 })
                             }
                         </Switch>
@@ -92,5 +94,10 @@ export default class LayoutPage extends Component {
                 </Layout>
             </Layout>
         )
+    }
+
+    componentDidUpdate (prevProps, prevState, snapshot) {
+        // let pathname = this.props.location.pathname
+        // console.log(pathname)
     }
 }

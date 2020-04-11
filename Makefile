@@ -11,7 +11,7 @@ up:
 	docker stop wolan
 	docker rm wolan
 	docker run -it -d --name wolan -p8080:8080 \
-	    -v "$$PWD/__task__":/app/__task__ \
+	    -v "$$PWD/__task__":/www/__task__ \
 	    zx5435/wolan
 
 up222222222222222:

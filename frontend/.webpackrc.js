@@ -1,8 +1,12 @@
 export default {
-    'publicPath': '/static/',
-    'html': {
-        inject: true,
-        template: './src/index.ejs',
+    'env': {
+        'production': {
+            'publicPath': '/static/',
+            'html': {
+                inject: true,
+                template: './src/index.ejs',
+            },
+        }
     },
     'extraBabelPlugins': [
         [
