@@ -1,8 +1,11 @@
 wolan
 ======
-cicdcm
+
+我懒
 
 # start
+
+demo http://zx5435.com:8080
 
 ```sh
 mkdir wolan
@@ -24,5 +27,3 @@ open http://localhost:4321
 - [ ] cd
 - [ ] gateway
 - [ ] auto ssl
-
-http://0.0.0.0:4321/api/ingress/start
