@@ -2,7 +2,7 @@ import fetch from 'dva/fetch'
 import ApolloClient from 'apollo-boost'
 
 const client = new ApolloClient({
-    uri: `${window.location.origin}/graphql`,
+    uri: process.env.NODE_ENV === 'development' ? 'http://localhost:8080/graphql' : `${window.location.origin}/graphql`,
 })
 
 // function delay (timeout) {

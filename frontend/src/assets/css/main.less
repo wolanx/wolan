@@ -1,8 +1,14 @@
 @import "color";
 
 :global {
+    @font-face {
+        font-family: Montserrat;
+        src: url(../fonts/Montserrat-SemiBold.woff2) format("truetype");
+    }
+
     body {
         //font-family: Montserrat, serif;
+        font-family: Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     }
 
     a {
@@ -15,6 +21,15 @@
 
     .fr {
         float: right;
+    }
+}
+
+.layout {
+    min-height: 100vh;
+
+    :global(.ant-menu-item-group-title) {
+        text-align: center;
+        font-size: 12px;
     }
 }
 

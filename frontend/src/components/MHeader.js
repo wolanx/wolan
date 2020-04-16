@@ -17,10 +17,13 @@ class MHeader extends React.Component {
                 <div className={'p2'}>
                     <Breadcrumb className={'fl'} separator={'>'}>
                         <Breadcrumb.Item>
-                            <a href="qwe">Tasks</a>
+                            <Link to={'/tasks'}>Tasks</Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>
-                            <a href="asd">{this.props.title}</a>
+                            <Link to={'/task/01-fs'}>01-fs</Link>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>
+                            <Link to={'/task/02-cm'}>02-cm</Link>
                         </Breadcrumb.Item>
                     </Breadcrumb>
                     <Link className={'fr'} to={'/logout'}>Logout</Link>

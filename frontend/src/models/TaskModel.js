@@ -6,6 +6,7 @@ function getList () {
         query: gql`
             {
                 listTask{
+                    sid
                     name
                     version
                     git{

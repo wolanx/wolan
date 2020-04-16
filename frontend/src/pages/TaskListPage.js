@@ -5,11 +5,10 @@ import { Link } from 'dva/router'
 import MHeader from '../components/MHeader'
 import MPanel from '../components/MPanel'
 
-@connect(state => ({
-    list: state.task.list
+@connect(({ task }) => ({
+    list: task.list
 }), dispatch => ({
     getList: () => {
-        console.log('dispatch')
         return dispatch({ type: 'task/getList' })
     },
 }))
@@ -24,7 +23,8 @@ class TaskListPage extends React.Component {
                         dataSource={this.props.list}
                         renderItem={item => (
                             <List.Item>
-                                <Card title={item.name} extra={<Link to={`/task/${item.name}`}>More</Link>}>
+                                <Card title={`${item.name} - ${item.sid}`}
+                                      extra={<Link to={`/task/${item.sid}`}>More</Link>}>
                                     {item.git.branch}
                                 </Card>
                             </List.Item>

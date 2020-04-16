@@ -4,10 +4,34 @@ import { Badge, Descriptions } from 'antd'
 import MHeader from '../components/MHeader'
 import MPanel from '../components/MPanel'
 
-@connect()
+@connect(({ task }) => ({
+    //
+}), dispatch => ({
+    doLoad: () => {
+
+    }
+}))
 export default class TaskInfoPage extends React.Component {
 
-    taskName = this.props.match.params.name
+    state = {
+        sid: this.props.match.params.sid
+    }
+
+    static getDerivedStateFromProps (nextProps, prevState) {
+        if (prevState.sid !== nextProps.match.params.sid) {
+            return {
+                sid: nextProps.match.params.sid
+            }
+        }
+
+        return null
+    }
+
+    componentDidUpdate (prevProps, prevState, snapshot) {
+        if (this.state.id !== prevState.id) {
+            this.props.doLoad()
+        }
+    }
 
     render () {
         return (
@@ -15,7 +39,7 @@ export default class TaskInfoPage extends React.Component {
                 <MHeader title={'Task details'}/>
                 <MPanel title={'Info'}>
                     <Descriptions bordered>
-                        <Descriptions.Item label="Name">{this.taskName}</Descriptions.Item>
+                        <Descriptions.Item label="Name">{this.state.sid}</Descriptions.Item>
                         <Descriptions.Item label="Billing Mode">Prepaid</Descriptions.Item>
                         <Descriptions.Item label="Automatic Renewal">YES</Descriptions.Item>
                         <Descriptions.Item label="Order time">2018-04-24 18:00:00</Descriptions.Item>
@@ -46,5 +70,4 @@ export default class TaskInfoPage extends React.Component {
             </>
         )
     }
-
 }

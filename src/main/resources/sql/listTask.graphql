@@ -3,9 +3,8 @@
         sid
         name
         version
-        git {
-            url
-            #            branch
+        git{
+            branch
         }
     }
 }
