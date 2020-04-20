@@ -1,6 +1,6 @@
 type Query {
     # 通过id获取
-    getTaskByName(name: String!): TaskDO
+    getTaskBySid(name: String!): TaskDO
     # 信息列表
     listTask: [TaskDO]
 }
@@ -16,6 +16,15 @@ type TaskDO {
 type GitBean {
     url:String
     branch:String
+}
+
+type Mutation {
+    createTask(TaskDO: addTask!): TaskDO
+}
+
+input addTask {
+    sid: String!
+    name: String!
 }
 
 # 变更相关接口

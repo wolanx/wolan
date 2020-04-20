@@ -9,17 +9,20 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 
+/**
+ * # GraphQL从入门到放弃 https://xeblog.cn/articles/6
+ * # GraphQL 零基础教程 https://segmentfault.com/a/1190000021899271
+ */
 @Component
-public class TaskGraph implements GraphQLQueryResolver {
+public class GraphQLQuery implements GraphQLQueryResolver {
 
-    public static TaskDO getTaskByName(String sid) throws IOException {
+    public static TaskDO getTaskBySid(String sid) throws IOException {
         Yaml yaml = new Yaml();
         File f = new File(WoConf.WorkPath + "/" + sid + "/wolan.yml");
         FileInputStream fIn = new FileInputStream(f);
@@ -42,7 +45,7 @@ public class TaskGraph implements GraphQLQueryResolver {
 
         for (File taskFile : Objects.requireNonNull(taskFiles)) {
             if (taskFile.isDirectory()) {
-                res.add(getTaskByName(taskFile.getName()));
+                res.add(getTaskBySid(taskFile.getName()));
             }
         }
 

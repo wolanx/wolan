@@ -1,0 +1,7 @@
+mutation {
+    createTask(TaskDO: {sid: "03-cc",name: "labsndfjkb"}){
+        sid
+        name
+        version
+    }
+}
