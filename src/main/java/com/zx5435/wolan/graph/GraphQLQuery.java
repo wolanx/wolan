@@ -1,14 +1,12 @@
 package com.zx5435.wolan.graph;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zx5435.wolan.model.TaskDO;
 import com.zx5435.wolan.other.WoConf;
+import com.zx5435.wolan.service.TaskService;
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +20,8 @@ import java.util.Objects;
 @Component
 public class GraphQLQuery implements GraphQLQueryResolver {
 
-    public static TaskDO getTaskBySid(String sid) throws IOException {
-        Yaml yaml = new Yaml();
-        File f = new File(WoConf.WorkPath + "/" + sid + "/wolan.yml");
-        FileInputStream fIn = new FileInputStream(f);
-        Object obj = yaml.load(fIn);
-        fIn.close();
-
-        ObjectMapper mapper = new ObjectMapper();
-        TaskDO task = mapper.convertValue(obj, TaskDO.class);
-        task.setSid(sid);
-
-        System.out.println("task = " + task);
-        return task;
+    public static TaskDO getTaskBySid(String sid) {
+        return TaskService.getOne(sid);
     }
 
     public List<TaskDO> listTask() throws IOException {

@@ -1,5 +1,11 @@
 mutation {
-    createTask(TaskDO: {sid: "03-cc",name: "labsndfjkb"}){
+    createTask(TaskDO: {
+        name: "007-demo"
+        git: {
+            url: "master"
+            branch: "https://github.com/zx5435/go-fs.git"
+        }
+    }){
         sid
         name
         version

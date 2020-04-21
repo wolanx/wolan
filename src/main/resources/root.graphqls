@@ -1,3 +1,5 @@
+# get
+
 type Query {
     # 通过id获取
     getTaskBySid(name: String!): TaskDO
@@ -5,7 +7,15 @@ type Query {
     listTask: [TaskDO]
 }
 
-# 信息对象
+# post
+
+type Mutation {
+    createTask(TaskDO: createTaskInput!): TaskDO
+    deleteTask(sid: String!): Boolean
+}
+
+# obj
+
 type TaskDO {
     sid: String!
     name: String!
@@ -18,13 +28,16 @@ type GitBean {
     branch:String
 }
 
-type Mutation {
-    createTask(TaskDO: addTask!): TaskDO
+# input
+
+input createTaskInput {
+    name: String!
+    git : gitInput!
 }
 
-input addTask {
-    sid: String!
-    name: String!
+input gitInput{
+    url: String!
+    branch : String!
 }
 
 # 变更相关接口
