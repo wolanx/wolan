@@ -1,3 +1,0 @@
-mutation {
-    deleteTask(sid: "007-demo")
-}

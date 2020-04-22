@@ -1,5 +1,5 @@
 {
-    listTask{
+    taskList{
         sid
         name
         version
@@ -7,7 +7,7 @@
             branch
         }
     }
-    getTaskBySid(name: "02-cm"){
+    taskGetBySid(sid: "02-cm"){
         name
     }
 }

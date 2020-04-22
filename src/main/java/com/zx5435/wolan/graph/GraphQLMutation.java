@@ -10,14 +10,19 @@ import org.springframework.stereotype.Component;
 public class GraphQLMutation implements GraphQLMutationResolver {
 
 
-    public static TaskDO createTask(TaskDO task) {
+    public static TaskDO taskCreate(TaskDO task) {
         System.out.println("task = " + task);
         return TaskService.addOne(task);
     }
 
-    public static Boolean deleteTask(String sid) {
+    public static Boolean taskDelete(String sid) {
         System.out.println("sid = " + sid);
         return TaskService.deleteOne(sid);
+    }
+
+    public static Boolean taskGitPull (String sid) {
+        System.out.println("sid = " + sid);
+        return true;
     }
 
 }

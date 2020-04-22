@@ -8,7 +8,7 @@ public class Git {
 
     public static void main(String[] args) {
         try {
-            TaskDO task = GraphQLQuery.getTaskBySid("fs");
+            TaskDO task = GraphQLQuery.taskGetBySid("fs");
             GitService.taskDoClone(task);
         } catch (FileNotFoundException e) {
             e.printStackTrace();

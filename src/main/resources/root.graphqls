@@ -2,16 +2,17 @@
 
 type Query {
     # 通过id获取
-    getTaskBySid(name: String!): TaskDO
+    taskGetBySid(sid: String!): TaskDO
     # 信息列表
-    listTask: [TaskDO]
+    taskList: [TaskDO]
 }
 
 # post
 
 type Mutation {
-    createTask(TaskDO: createTaskInput!): TaskDO
-    deleteTask(sid: String!): Boolean
+    taskCreate(TaskDO: taskCreateInput!): TaskDO
+    taskDelete(sid: String!): Boolean
+    taskGitPull(sid: String!): Boolean
 }
 
 # obj
@@ -30,7 +31,7 @@ type GitBean {
 
 # input
 
-input createTaskInput {
+input taskCreateInput {
     name: String!
     git : gitInput!
 }
@@ -39,27 +40,3 @@ input gitInput{
     url: String!
     branch : String!
 }
-
-# 变更相关接口
-#type Mutation {
-#    # 添加用户信息
-#    saveUser(user: addUserInput!): Boolean
-#    # 删除用户信息
-#    deleteUser(id: Int!): Boolean
-#    # 更新用户信息
-#    updateUser(user: updateUserInput!): Boolean
-#}
-
-# 添加用户信息输入参数
-#input addUserInput {
-#    id: Int!
-#    username: String!
-#    password: String!
-#}
-
-# 更新用户信息输入参数
-#input updateUserInput {
-#    id: Int!
-#    username: String!
-#    password: String!
-#}

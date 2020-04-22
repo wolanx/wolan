@@ -1,5 +1,5 @@
 mutation {
-    createTask(TaskDO: {
+    taskCreate(TaskDO: {
         name: "007-demo"
         git: {
             url: "master"

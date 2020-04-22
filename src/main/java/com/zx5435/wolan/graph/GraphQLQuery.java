@@ -7,7 +7,6 @@ import com.zx5435.wolan.service.TaskService;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,23 +19,24 @@ import java.util.Objects;
 @Component
 public class GraphQLQuery implements GraphQLQueryResolver {
 
-    public static TaskDO getTaskBySid(String sid) {
+    public static TaskDO taskGetBySid(String sid) {
+        System.out.println("sid = " + sid);
         return TaskService.getOne(sid);
     }
 
-    public List<TaskDO> listTask() throws IOException {
-        ArrayList<TaskDO> res = new ArrayList<>();
+    public List<TaskDO> taskList() {
+        ArrayList<TaskDO> ret = new ArrayList<>();
 
         File workFile = new File(WoConf.WorkPath);
         File[] taskFiles = workFile.listFiles();
 
         for (File taskFile : Objects.requireNonNull(taskFiles)) {
             if (taskFile.isDirectory()) {
-                res.add(getTaskBySid(taskFile.getName()));
+                ret.add(taskGetBySid(taskFile.getName()));
             }
         }
 
-        return res;
+        return ret;
     }
 
 }
