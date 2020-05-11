@@ -5,10 +5,11 @@ import MHeader from '../components/MHeader'
 import MPanel from '../components/MPanel'
 
 @connect(({ task }) => ({
-    //
+    info: task.info
 }), dispatch => ({
-    doLoad: () => {
-
+    doLoad: (sid) => {
+        console.log('doLoad')
+        return dispatch({ type: 'task/getOne', payload: { sid: sid } })
     }
 }))
 export default class TaskInfoPage extends React.Component {
@@ -28,9 +29,13 @@ export default class TaskInfoPage extends React.Component {
     }
 
     componentDidUpdate (prevProps, prevState, snapshot) {
-        if (this.state.id !== prevState.id) {
-            this.props.doLoad()
+        if (this.state.sid !== prevState.sid) {
+            this.props.doLoad(this.state.sid)
         }
+    }
+
+    componentDidMount () {
+        this.props.doLoad(this.state.sid)
     }
 
     render () {
@@ -53,17 +58,7 @@ export default class TaskInfoPage extends React.Component {
                         <Descriptions.Item label="Discount">$20.00</Descriptions.Item>
                         <Descriptions.Item label="Official Receipts">$60.00</Descriptions.Item>
                         <Descriptions.Item label="Config Info">
-                            Data disk type: MongoDB
-                            <br/>
-                            Database version: 3.4
-                            <br/>
-                            Package: dds.mongo.mid
-                            <br/>
-                            Storage space: 10 GB
-                            <br/>
-                            Replication factor: 3
-                            <br/>
-                            Region: East China 1<br/>
+                            <pre>{JSON.stringify(this.props.info, null, '\t')}</pre>
                         </Descriptions.Item>
                     </Descriptions>
                 </MPanel>
