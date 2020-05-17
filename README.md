@@ -19,11 +19,31 @@ open http://localhost:4321
 
 # include
 
-- [x] page
-    - [x] task run
-- [x] ingress
-    - [ ] auto https
-- [ ] ci
-- [ ] cd
-- [ ] gateway
-- [ ] auto ssl
+task
+ - [x] load 2020-05-17
+ - [ ] config
+
+
+git
+ - [x] clone 2020-05-17
+ - [ ] pull update
+
+
+pipeline in Docker
+ - [ ] load setting from
+   - [ ] self
+   - [ ] code/xx
+ - [ ] job
+
+
+k8s
+ - [x] load ns pod
+ - [x] apply
+
+
+ingress
+ - [ ] https
+
+
+other
+ - [ ] image register

@@ -9,9 +9,13 @@ import java.io.File;
 
 public class GitService {
 
-    public static void taskDoClone(TaskDO task) {
+    public static boolean taskDoClone(TaskDO task) {
         String url = task.getGit().getUrl(); // https://github.com/zx5435/go-fs.git
+        if (url.isEmpty()) {
+            return false;
+        }
         GitService.cloneRepository(url, WoConf.WorkPath + "/" + task.getSid() + "/code");
+        return true;
     }
 
     private static void cloneRepository(String url, String localPath) {

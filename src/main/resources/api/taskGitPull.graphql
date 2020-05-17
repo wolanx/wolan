@@ -1,0 +1,3 @@
+mutation {
+    taskGitPull(sid: "02-cm")
+}
