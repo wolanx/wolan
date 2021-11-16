@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: elk
+  name: elk
+spec:
+  rules:
+    - host: es.cc5ee3108d340437b956b5d18bf1a9ba7.cn-shanghai.alicontainer.com
+      http:
+        paths:
+          - backend:
+              serviceName: elasticsearch
+              servicePort: 9200
+            path: /
+    - host: kibana.cc5ee3108d340437b956b5d18bf1a9ba7.cn-shanghai.alicontainer.com
+      http:
+        paths:
+          - backend:
+              serviceName: kibana
+              servicePort: 5601
+            path: /
