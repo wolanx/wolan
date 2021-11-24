@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  namespace: elk
+  namespace: wolan
   name: filebeat
   labels:
     k8s-app: filebeat
@@ -20,16 +20,16 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: filebeat
-          image: docker.elastic.co/beats/filebeat:7.12.0
+          image: docker.elastic.co/beats/filebeat:7.15.0
           args: [
-              "-c", "/etc/filebeat.yml",
+              "-c", "/etc/config/filebeat.yml",
               "-e",
           ]
           env:
             - name: ELASTICSEARCH_HOST
-              value: elasticsearch
+              value: svc-es
             - name: ELASTICSEARCH_PORT
-              value: "9200"
+              value: "80"
             - name: ELASTICSEARCH_USERNAME
               value: elastic
             - name: ELASTICSEARCH_PASSWORD
@@ -54,9 +54,7 @@ spec:
               memory: 100Mi
           volumeMounts:
             - name: config
-              mountPath: /etc/filebeat.yml
-              readOnly: true
-              subPath: filebeat.yml
+              mountPath: /etc/config
             - name: data
               mountPath: /usr/share/filebeat/data
             - name: varlibdockercontainers
@@ -68,7 +66,6 @@ spec:
       volumes:
         - name: config
           configMap:
-            defaultMode: 0640
             name: filebeat-config
         - name: varlibdockercontainers
           hostPath:

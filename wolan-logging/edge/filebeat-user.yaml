@@ -4,8 +4,8 @@ metadata:
   name: filebeat
 subjects:
   - kind: ServiceAccount
+    namespace: wolan
     name: filebeat
-    namespace: elk
 roleRef:
   kind: ClusterRole
   name: filebeat
@@ -35,7 +35,7 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  namespace: elk
+  namespace: wolan
   name: filebeat
   labels:
     k8s-app: filebeat

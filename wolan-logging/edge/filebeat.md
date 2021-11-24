@@ -1,3 +1,4 @@
+```yaml
 #filebeat.inputs:
 #- type: container
 #  paths:
@@ -61,3 +62,41 @@ output.elasticsearch:
   password: ${ELASTICSEARCH_PASSWORD}
 #setup.kibana:
 #  host: kibana:5601
+
+```
+
+```yaml
+filebeat.autodiscover:
+  providers:
+    - type: kubernetes
+      node: ${NODE_NAME}
+      hints.enabled: true
+      hints.default_config:
+        enabled: false
+        type: container
+        paths:
+          - /var/log/containers/*${data.kubernetes.container.id}.log
+output.console:
+  pretty: true
+```
+
+```yaml
+filebeat.autodiscover:
+  providers:
+    - type: kubernetes
+      templates:
+        - condition:
+            equals:
+              kubernetes.namespace: ccm-perf
+          config:
+            - type: container
+              paths:
+                - /var/log/containers/*-${data.kubernetes.container.id}.log
+              exclude_lines: [ "^\\s+[\\-`('.|_]" ]  # drop asciiart lines
+processors:
+  - drop_fields:
+      fields: [ "host", "tags", "ecs", "log", "prospector", "agent", "input", "beat", "offset", "kubernetes.node.labels" ]
+      ignore_missing: true
+output.console:
+  pretty: true
+```
