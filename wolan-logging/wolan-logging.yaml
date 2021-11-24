@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: wolan
+  name: dep-wolan-logging
+  labels:
+    app: wolan-logging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wolan-logging
+  template:
+    metadata:
+      labels:
+        app: wolan-logging
+    spec:
+      containers:
+        - name: wolan-logging
+          image: zx5435/wolan:logging
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 20100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: wolan
+  name: svc-wolan-logging
+spec:
+  ports:
+    - port: 20100
+  selector:
+    app: wolan-logging
