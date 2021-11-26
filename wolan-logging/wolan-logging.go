@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 )
@@ -13,7 +15,6 @@ func main() {
 
 	r.NoRoute(proxyHandle)
 	r.GET("/ping", pingHandle)
-	r.GET("/login", proxyHandle)
 
 	err := r.Run(":20100")
 	if err != nil {
@@ -31,7 +32,19 @@ func proxyHandle(c *gin.Context) {
 	proxy := &httputil.ReverseProxy{Director: func(req *http.Request) {
 		req.URL.Scheme = "http"
 		req.URL.Host = "svc-es:9200"
+		//req.URL.Host = "47.100.105.217:18830"
+		req.URL.User = c.Request.URL.User
 	}}
+	proxy.ModifyResponse = func(r *http.Response) error {
+		all, _ := ioutil.ReadAll(r.Body)
+		fmt.Println("------")
+		fmt.Println(r.Request.URL)
+		fmt.Println("======")
+		fmt.Println(string(all))
+		bs := bytes.NewBufferString(string(all))
+		r.Body = ioutil.NopCloser(bs)
+		return nil
+	}
 	proxy.ServeHTTP(c.Writer, c.Request)
 }
 

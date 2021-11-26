@@ -6,9 +6,9 @@ ENV GOPROXY https://goproxy.cn,direct
 
 WORKDIR /www
 
-#ADD go.mod .
-#ADD go.sum .
-#RUN go mod download
+ADD go.mod .
+ADD go.sum .
+RUN go mod download
 COPY . .
 RUN go build -ldflags="-s -w" -o wolan-logging wolan-logging.go
 
