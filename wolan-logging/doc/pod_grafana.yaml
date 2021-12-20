@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: wolan
+  name: pod-grafana
+  labels:
+    app: pod-grafana
+spec:
+  containers:
+    - name: main
+      image: grafana/grafana:7.5.10
+      ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: wolan
+  name: svc-grafana
+spec:
+  type: ClusterIP
+  selector:
+    app: pod-grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
