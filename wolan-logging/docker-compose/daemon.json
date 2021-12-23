@@ -1,8 +1,0 @@
-{
-  "debug": true,
-  "log-driver": "loki",
-  "log-opts": {
-    "loki-url": "http://192.168.2.238:3100/loki/api/v1/push",
-    "loki-batch-size": "5"
-  }
-}

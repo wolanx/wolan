@@ -9,15 +9,6 @@ services:
     networks:
       - loki
 
-#  promtail:
-#    image: grafana/promtail:2.4.0
-#    volumes:
-#      - /var/lib/docker/containers:/var/lib/docker/containers
-#      - .:/etc/promtail
-#    command: -config.file=/etc/promtail/config.yml
-#    networks:
-#      - loki
-
   svc-grafana:
     image: grafana/grafana:latest
     ports:
