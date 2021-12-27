@@ -1,56 +1,83 @@
 package main
 
 import (
-	"bytes"
+	"context"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"net/http/httputil"
+	"os"
+	"time"
+
+	"github.com/elastic/beats/v7/filebeat/cmd"
+	"github.com/elastic/beats/v7/libbeat/beat"
+	"github.com/elastic/beats/v7/libbeat/common"
+	"github.com/elastic/beats/v7/libbeat/outputs"
+	"github.com/elastic/beats/v7/libbeat/publisher"
 )
 
-import "github.com/gin-gonic/gin"
+//var Bundle = plugin.Bundle(
+//	outputs.Plugin("loki", newHTTPOutput),
+//)
+
+func init() {
+	outputs.RegisterType("loki", newHTTPOutput)
+}
 
 func main() {
-	r := gin.Default()
-
-	r.NoRoute(proxyHandle)
-	r.GET("/ping", pingHandle)
-
-	err := r.Run(":20100")
-	if err != nil {
-		return
+	if err := cmd.RootCmd.Execute(); err != nil {
+		os.Exit(1)
 	}
 }
 
-func pingHandle(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-	})
+type clientConfig struct {
+	// The endpoint our client should be POSTing to
+	Endpoint string `config:"endpoint"`
 }
 
-func proxyHandle(c *gin.Context) {
-	proxy := &httputil.ReverseProxy{Director: func(req *http.Request) {
-		req.URL.Scheme = "http"
-		req.URL.Host = "svc-es:9200"
-		//req.URL.Host = "47.100.105.217:18830"
-		req.URL.User = c.Request.URL.User
-	}}
-	proxy.ModifyResponse = func(r *http.Response) error {
-		all, _ := ioutil.ReadAll(r.Body)
-		fmt.Println("------")
-		fmt.Println(r.Request.URL)
-		fmt.Println("======")
-		fmt.Println(string(all))
-		bs := bytes.NewBufferString(string(all))
-		r.Body = ioutil.NopCloser(bs)
-		return nil
+func newHTTPOutput(_ outputs.IndexManager, _ beat.Info, stats outputs.Observer, cfg *common.Config) (outputs.Group, error) {
+	config := clientConfig{}
+	if err := cfg.Unpack(&config); err != nil {
+		return outputs.Fail(err)
 	}
-	proxy.ServeHTTP(c.Writer, c.Request)
+
+	clients := make([]outputs.NetworkClient, 0)
+	clients[0] = &LokiClient{
+		stats: stats,
+	}
+
+	return outputs.SuccessNet(false, 200, 3, clients)
 }
 
-func _bulk(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	_, _ = w.Write([]byte(`{"took":0,"errors":false}`))
-	//_, _ = w.Write([]byte(`{"took":0,"errors":false,"items":[]}`))
-	fmt.Println(r.Method, r.URL)
+type LokiClient struct {
+	stats  outputs.Observer
+	client *http.Client
+}
+
+func (client *LokiClient) String() string {
+	return "loki"
+}
+
+func (client *LokiClient) Connect() error {
+	client.client = &http.Client{
+		Timeout: 2 * time.Second,
+	}
+
+	return nil
+}
+
+func (client *LokiClient) Close() error {
+	client.client = nil
+	return nil
+}
+
+func (client *LokiClient) Publish(_ context.Context, batch publisher.Batch) error {
+	events := batch.Events()
+
+	for i, event := range events {
+		fmt.Println(i, event)
+	}
+
+	client.stats.Acked(len(events))
+	batch.ACK()
+
+	return nil
 }

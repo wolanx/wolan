@@ -1,0 +1,11 @@
+namespace: wolan
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    type: generated
+configMapGenerator:
+  - name: promtail-config
+    files:
+      - promtail-config.yaml
+resources:
+  - promtail-daemonset.yaml

@@ -21,7 +21,7 @@ data:
       - drop_fields:
           fields: [ "host", "tags", "ecs", "log", "prospector", "agent", "input", "beat", "offset", "kubernetes.node.labels" ]
           ignore_missing: true
-    output.elasticsearch:
-      hosts: [ 'svc-wolan-logging:20100' ]
-      username: ${ELASTICSEARCH_USERNAME}
-      password: ${ELASTICSEARCH_PASSWORD}
+    output.console:
+#      hosts: [ 'svc-wolan-logging:20100' ]
+#      username: ${ELASTICSEARCH_USERNAME}
+#      password: ${ELASTICSEARCH_PASSWORD}
