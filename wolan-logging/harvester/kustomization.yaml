@@ -4,8 +4,6 @@ generatorOptions:
   labels:
     type: generated
 configMapGenerator:
-  - name: promtail-config
+  - name: filebeat-config
     files:
-      - promtail-config.yaml
-resources:
-  - promtail-daemonset.yaml
+      - filebeat-config.yml

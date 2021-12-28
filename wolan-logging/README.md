@@ -25,3 +25,15 @@ v6 demo
 https://www.fullstory.com/blog/writing-a-filebeat-output-plugin/
 
 GOOS=linux go build -trimpath -buildmode=plugin
+
+
+# build
+```shell
+git clone https://github.com.cnpmjs.org/elastic/beats.git --depth 1
+vi /www/beats/libbeat/outputs/console/loki.go
+cd /www/beats/filebeat
+CGO_ENABLED=0 make
+./filebeat -c 2.yml -e
+```
+
+
