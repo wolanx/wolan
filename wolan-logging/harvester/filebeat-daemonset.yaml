@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   namespace: wolan
-  name: filebeat
+  name: ds-filebeat
 spec:
   selector:
     matchLabels:

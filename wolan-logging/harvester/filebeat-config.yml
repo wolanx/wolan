@@ -1,29 +1,32 @@
-filebeat.inputs:
-  - type: log
-    enabled: true
-    paths:
-      - /var/log/*.log
+#filebeat.inputs:
+#  - type: log
+#    enabled: true
+#    paths:
+#      - /var/log/*.log
 
-output.console:
-#output.loki:
+filebeat.autodiscover:
+  providers:
+    - type: kubernetes
+      templates:
+        - condition:
+            equals:
+              kubernetes.namespace: ccm-perf
+          config:
+            - type: container
+              paths:
+                - /var/log/containers/*-${data.kubernetes.container.id}.log
+              exclude_lines: [ "^\\s+[\\-`('.|_]" ]  # drop asciiart lines
 
-#filebeat.autodiscover:
-#  providers:
-#    - type: kubernetes
-#      templates:
-#        - condition:
-#            equals:
-#              kubernetes.namespace: ccm-perf
-#          config:
-#            - type: container
-#              paths:
-#                - /var/log/containers/*-${data.kubernetes.container.id}.log
-#              exclude_lines: [ "^\\s+[\\-`('.|_]" ]  # drop asciiart lines
-#processors:
-#  - drop_fields:
-#      fields: [ "host", "tags", "ecs", "log", "prospector", "agent", "input", "beat", "offset", "kubernetes.node.labels" ]
-#      ignore_missing: true
+processors:
+  - drop_fields:
+      fields: [ "host", "tags", "ecs", "log", "prospector", "agent", "input", "beat", "offset", "kubernetes.node.labels" ]
+      ignore_missing: true
+
+#output.console:
+
 #output.console:
 #      hosts: [ 'svc-wolan-logging:20100' ]
 #      username: ${ELASTICSEARCH_USERNAME}
 #      password: ${ELASTICSEARCH_PASSWORD}
+
+output.loki:
