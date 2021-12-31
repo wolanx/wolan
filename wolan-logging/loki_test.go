@@ -1,4 +1,4 @@
-package wolan_logging
+package main
 
 import (
 	"testing"
@@ -6,11 +6,11 @@ import (
 
 	"github.com/elastic/beats/v7/libbeat/beat"
 	"github.com/elastic/beats/v7/libbeat/publisher"
-	"github.com/zx5435/wolan/wolan-logging/console"
+	"github.com/zx5435/wolan/wolan-logging/loki"
 )
 
 func TestConsoleOutput(t *testing.T) {
-	client := &console.LokiClient{}
+	client := &loki.LokiClient{}
 
 	var events []publisher.Event
 	events = append(events, publisher.Event{

@@ -1,8 +1,7 @@
-package console
+package loki
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -15,6 +14,9 @@ import (
 	"github.com/elastic/beats/v7/libbeat/logp"
 	"github.com/elastic/beats/v7/libbeat/outputs"
 	"github.com/elastic/beats/v7/libbeat/publisher"
+	"github.com/grafana/loki/pkg/logproto"
+	"github.com/prometheus/common/model"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -25,11 +27,11 @@ func init() {
 	outputs.RegisterType("loki", newLoki)
 }
 
-type LokiConfig struct {
+type lokiConfig struct {
 }
 
 func newLoki(_ outputs.IndexManager, beat beat.Info, observer outputs.Observer, cfg *common.Config) (outputs.Group, error) {
-	config := LokiConfig{}
+	config := lokiConfig{}
 	if err := cfg.Unpack(&config); err != nil {
 		return outputs.Fail(err)
 	}
@@ -53,6 +55,7 @@ func newLoki(_ outputs.IndexManager, beat beat.Info, observer outputs.Observer, 
 type LokiClient struct {
 	host     string
 	client   *http.Client
+	grpc     logproto.PusherClient
 	observer outputs.Observer
 	index    string
 }
@@ -66,6 +69,12 @@ func (c *LokiClient) Connect() error {
 		Timeout: 2 * time.Second,
 	}
 
+	conn, err := grpc.Dial("47.100.105.217:3100")
+	if err != nil {
+		return err
+	}
+	c.grpc = logproto.NewPusherClient(conn)
+
 	return nil
 }
 
@@ -74,16 +83,29 @@ func (c *LokiClient) Close() error {
 	return nil
 }
 
-func (c *LokiClient) Publish(_ context.Context, batch publisher.Batch) error {
+func (c *LokiClient) Publish(ctx context.Context, batch publisher.Batch) error {
 	st := c.observer
 	events := batch.Events()
 	st.NewBatch(len(events))
 
-	c.PublicBatch(events)
+	//c.PublicBatch(events)
 
 	batch.ACK()
 	st.Dropped(0)
 	st.Acked(len(events))
+
+	now := time.Now()
+	firstEntries := []logproto.Entry{
+		{Timestamp: now.Add(-1 * time.Nanosecond), Line: "1"},
+		{Timestamp: now.Add(-1 * time.Minute), Line: "2"},
+	}
+	req := &logproto.PushRequest{Streams: []logproto.Stream{
+		{Labels: model.LabelSet{"app": "l"}.String(), Entries: firstEntries},
+	}}
+	_, err := c.grpc.Push(ctx, req)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -124,35 +146,4 @@ func (c *LokiClient) PublicBatch(events []publisher.Event) {
 	}
 	content, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("resp", string(content))
-}
-
-type event struct {
-	Timestamp time.Time     `json:"@timestamp"`
-	Fields    common.MapStr `json:"-"`
-}
-
-func makeEvent(v *beat.Event) map[string]json.RawMessage {
-	e := event{Timestamp: v.Timestamp.UTC(), Fields: v.Fields}
-	b, err := json.Marshal(e)
-	if err != nil {
-		logger.Warn("Error encoding event to JSON: %v", err)
-	}
-
-	var eventMap map[string]json.RawMessage
-	err = json.Unmarshal(b, &eventMap)
-	if err != nil {
-		logger.Warn("Error decoding JSON to map: %v", err)
-	}
-	// Add the individual fields to the map, flatten "Fields"
-	for j, k := range e.Fields {
-		b, err = json.Marshal(k)
-		if err != nil {
-			logger.Warn("Error encoding map to JSON: %v", err)
-		}
-		eventMap[j] = b
-	}
-	indent, _ := json.MarshalIndent(eventMap, "", "  ")
-	fmt.Println(string(indent))
-
-	return eventMap
 }

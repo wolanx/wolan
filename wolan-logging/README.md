@@ -12,8 +12,6 @@ https://github1s.com/raboof/beats-output-http/blob/HEAD/README.md
 v6 demo
 https://www.fullstory.com/blog/writing-a-filebeat-output-plugin/
 
-GOOS=linux go build -trimpath -buildmode=plugin
-
 # build
 
 ```shell
