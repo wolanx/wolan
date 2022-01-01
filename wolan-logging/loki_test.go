@@ -35,5 +35,5 @@ func TestConsoleOutput(t *testing.T) {
 		Flags: 1,
 		Cache: publisher.EventCache{},
 	})
-	client.PublicBatch(events)
+	client.PublicBatchHttp(events)
 }

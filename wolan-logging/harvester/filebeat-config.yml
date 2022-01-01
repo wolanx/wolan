@@ -25,4 +25,4 @@ processors:
 #output.console:
 
 output.loki:
-  hosts: [ 'svc-loki:3100' ]
+  hosts: [ 'svc-loki:9095' ]

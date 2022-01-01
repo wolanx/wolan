@@ -69,7 +69,7 @@ func (c *LokiClient) Connect() error {
 		Timeout: 2 * time.Second,
 	}
 
-	conn, err := grpc.Dial("47.100.105.217:3100")
+	conn, err := grpc.Dial(c.host, grpc.WithInsecure())
 	if err != nil {
 		return err
 	}
@@ -80,6 +80,7 @@ func (c *LokiClient) Connect() error {
 
 func (c *LokiClient) Close() error {
 	c.client = nil
+	c.grpc = nil
 	return nil
 }
 
@@ -88,29 +89,57 @@ func (c *LokiClient) Publish(ctx context.Context, batch publisher.Batch) error {
 	events := batch.Events()
 	st.NewBatch(len(events))
 
-	//c.PublicBatch(events)
+	//c.PublicBatchHttp(events)
 
-	batch.ACK()
-	st.Dropped(0)
-	st.Acked(len(events))
-
-	now := time.Now()
-	firstEntries := []logproto.Entry{
-		{Timestamp: now.Add(-1 * time.Nanosecond), Line: "1"},
-		{Timestamp: now.Add(-1 * time.Minute), Line: "2"},
-	}
-	req := &logproto.PushRequest{Streams: []logproto.Stream{
-		{Labels: model.LabelSet{"app": "l"}.String(), Entries: firstEntries},
-	}}
-	_, err := c.grpc.Push(ctx, req)
-	if err != nil {
-		return err
+	// grpc
+	redo, err := c.PublicBatchGrpc(ctx, events)
+	dropped := len(redo)
+	if dropped == 0 {
+		batch.ACK()
+	} else {
+		batch.RetryEvents(redo)
 	}
 
-	return nil
+	st.Dropped(dropped)
+	st.Acked(len(events) - dropped)
+
+	return err
 }
 
-func (c *LokiClient) PublicBatch(events []publisher.Event) {
+func f2l(fields common.MapStr) model.LabelSet {
+	fields.Delete("agent")
+	fields.Delete("message")
+	//ret := common.MapStr{}
+	ret := model.LabelSet{}
+
+	for k, v := range fields.Flatten() {
+		label := strings.ReplaceAll(strings.ReplaceAll(k, "-", "_"), ".", "_")
+		ret[model.LabelName(label)] = model.LabelValue(fmt.Sprintf("%s", v))
+	}
+	return ret
+}
+
+func (c *LokiClient) PublicBatchGrpc(ctx context.Context, events []publisher.Event) ([]publisher.Event, error) {
+	for _, event := range events {
+		event := &event.Content
+		fields := event.Fields
+		msg, _ := fields.GetValue("message")
+
+		logs := []logproto.Entry{
+			{Timestamp: event.Timestamp, Line: msg.(string)},
+		}
+		req := &logproto.PushRequest{Streams: []logproto.Stream{
+			{Labels: f2l(fields).String(), Entries: logs},
+		}}
+		_, err := c.grpc.Push(ctx, req)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	return nil, nil
+}
+
+func (c *LokiClient) PublicBatchHttp(events []publisher.Event) {
 	var values [][]interface{}
 
 	labels := common.MapStr{}

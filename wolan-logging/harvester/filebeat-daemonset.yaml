@@ -17,7 +17,7 @@ spec:
       containers:
         - name: filebeat
           imagePullPolicy: Always
-          image: zx5435/wolan:loki
+          image: zx5435/wolan:ff
           args: [
               "-c", "/etc/config/filebeat-config.yml",
               "-e",
