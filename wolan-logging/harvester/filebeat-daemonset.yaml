@@ -16,8 +16,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: filebeat
-          imagePullPolicy: Always
-          image: zx5435/wolan:ff
+          image: ghcr.io/wolanx/filebeat:main
           args: [
               "-c", "/etc/config/filebeat-config.yml",
               "-e",
