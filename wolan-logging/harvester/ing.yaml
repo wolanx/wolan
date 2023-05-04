@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ing-grafana
+spec:
+  rules:
+    - host: grafana.c4d70cde56fa2409996451a668308f950.cn-shanghai.alicontainer.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: svc-grafana
+              servicePort: 3000

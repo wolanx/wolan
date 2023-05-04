@@ -1,7 +1,6 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  namespace: wolan
   name: wolan
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -11,26 +10,13 @@ metadata:
 rules:
   - apiGroups: [ "" ] # "" indicates the core API group
     resources:
-      - namespaces
-      - pods
       - nodes
+      - services
+      - pods
     verbs:
       - get
       - watch
       - list
-  - apiGroups: [ "apps" ]
-    resources:
-      - replicasets
-    verbs: [ "get", "list", "watch" ]
-#  - apiGroups: [ "" ]
-#    resources:
-#      - nodes
-#      - services
-#      - pods
-#    verbs:
-#      - get
-#      - watch
-#      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -38,7 +24,6 @@ metadata:
   name: wolan
 subjects:
   - kind: ServiceAccount
-    namespace: wolan
     name: wolan
 roleRef:
   apiGroup: rbac.authorization.k8s.io

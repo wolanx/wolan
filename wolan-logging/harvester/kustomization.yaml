@@ -1,9 +1,15 @@
-namespace: wolan
+# kz build . | k --kubeconfig ~/Desktop/kc/kubeconfig.gimc-dev2 apply -f -
+namespace: elk
 generatorOptions:
   disableNameSuffixHash: true
-  labels:
-    type: generated
 configMapGenerator:
-  - name: filebeat-config
+  - name: promtail-config
     files:
-      - filebeat-config.yml
+      - promtail-config.yaml
+resources:
+  - ds_promtail.yaml
+  - pod_grafana.yaml
+  - pod_loki.yaml
+  # base
+  - ing.yaml
+  - user.yaml
